@@ -2,7 +2,7 @@
 A collection of RNG functions for ML KEM
 """
 
-from hashlib import shake_128, shake_256
+from hashlib import shake_128, shake_256, sha3_256, sha3_512
 
 from constants import Q, N, MATRIX_SAMPLE_BOUND
 from encoding import bytes_to_bits
@@ -81,3 +81,39 @@ def generateSmallPolynomial(bs: bytes, eta: int) -> list[int]:
     ret.append((x - y) % Q)
   return ret
 
+
+def hashG(inp: bytes) -> bytes:
+  """
+  The hash function denoted by G
+
+  Args:
+    inp (bytes): Input to the hash function
+
+  Returns:
+    The resulting hash bytes (64 bytes)
+  """
+  return sha3_512(inp).digest()
+
+def hashH(inp: bytes) -> bytes:
+  """
+  The hash function denoted by H
+
+  Args:
+    inp (bytes): Input to the hash function
+
+  Returns:
+    The resulting hash bytes (32 bytes)
+  """
+  return sha3_256(inp).digest()
+
+def hashJ(inp: bytes) -> bytes:
+  """
+  The hash function denoted by J
+
+  Args:
+    inp (bytes): Input to the hash function
+
+  Returns:
+    The resulting hash bytes (32 bytes)
+  """
+  return shake_256(inp).digest(32)
