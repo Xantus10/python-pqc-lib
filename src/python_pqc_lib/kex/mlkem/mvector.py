@@ -94,7 +94,7 @@ class MVector:
       _singleInvNTT(n)
     return MVector(invntt, isntt=False)
 
-  def __mul__(self, other: 'MVector') -> 'MVector':
+  def __mul__(self, other: 'MVector') -> np.typing.NDArray[Any]:
     """
     MVector-MVector multiplication
 
@@ -102,7 +102,7 @@ class MVector:
       other (MVector): The other vector
 
     Returns:
-      A new result vector
+      The result polynomial
 
     Raises:
       TypeError: Other operand is not of type MVector
@@ -113,10 +113,10 @@ class MVector:
     if not (self.isntt and other.isntt): raise ValueError('Both operands need to be NTTs to be multiplied')
     k = len(self.arr)
     if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
-    new = np.zeros((k, N), dtype=np.int64)
+    new = np.zeros((N,), dtype=np.int64)
     for i in range(k):
-      new[i] += multiplyNTTs(self.arr[i], other.arr[i])
-    return MVector(new, isntt=True)
+      new += multiplyNTTs(self.arr[i], other.arr[i])
+    return new
 
   def __add__(self, other: 'MVector') -> 'MVector':
     """
