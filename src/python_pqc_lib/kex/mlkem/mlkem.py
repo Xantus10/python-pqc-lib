@@ -1,10 +1,12 @@
 """
 Main ML KEM class
 """
+import numpy as np
+
 from secrets import token_bytes
 
-from .constants import MLKEM_Parameters
-from .encoding import byte_encode, byte_decode
+from .constants import MLKEM_Parameters, Q
+from .encoding import byte_encode, byte_decode, compress, decompress
 from .mmatrix import MMatrix
 from .mvector import MVector
 from .random_helper import generateSmallPolynomial, generateMatrixPolynomial, hashG, hashH, prf
@@ -34,7 +36,7 @@ class MLKEM:
     self.decaps_key = None
     if encapsulation_key:
       self.encaps_key = encapsulation_key
-      self.__matrix = self.generateMatrix(self.encaps_key[-32:])
+      self.__matrix = self.generateMatrix(self.encaps_key[-32:]).transpose()
       self.__public_vec = MVector.from_coefficients([byte_decode(self.encaps_key[i:i+384], 12) for i in range(self.k)], isntt=True)
     else:
       self.encaps_key, self.decaps_key = self.__keyGen()
@@ -119,3 +121,33 @@ class MLKEM:
     random_d = token_bytes(32)
     random_z = token_bytes(32)
     return self.__innerKeyGen(random_d, random_z)
+
+
+  def __PKEEncrypt(self, m: bytes, random_r: bytes) -> bytes:
+    """
+    Encapsulate a secret message m
+
+    Args:
+      m (bytes): The secret message (32 bytes)
+      random_r (bytes): A source of randomness (32 bytes)
+
+    Returns:
+      The ciphertext u+v
+    """
+    uniq_n = 0
+    self.__secret_vec = self.generateVector(random_r, uniq_n, self.eta1).NTT()
+    uniq_n += self.k
+    error_vec1 = self.generateVector(random_r, uniq_n, self.eta2)
+    uniq_n += self.k
+    error_pol2 = generateSmallPolynomial(prf(random_r, uniq_n, self.eta2), self.eta2)
+    u = (self.__matrix @ self.__secret_vec).invNTT() + error_vec1
+    m_encoded = decompress(np.array(byte_decode(m, 1), dtype=np.int64), 1)
+    v = self.__public_vec * self.__secret_vec
+    MVector.simpleInvNTT(v)
+    v += m_encoded
+    v %= Q
+    v += error_pol2
+    v %= Q
+    c1 = b''.join([byte_encode(compress(u.arr[i], self.du), self.du) for i in range(self.k)])
+    c2 = byte_encode(compress(v, self.dv), self.dv)
+    return c1 + c2
