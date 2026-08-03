@@ -4,8 +4,8 @@ A collection of RNG functions for ML KEM
 
 from hashlib import shake_128, shake_256, sha3_256, sha3_512
 
-from constants import Q, N, MATRIX_SAMPLE_BOUND
-from encoding import bytes_to_bits
+from .constants import Q, N, MATRIX_SAMPLE_BOUND
+from .encoding import bytes_to_bits
 
 _MATRIX_GEN_XOF_STEP_SIZE = 99
 
@@ -33,7 +33,7 @@ def generateMatrixPolynomial(rho: bytes, inp_j: int, inp_i: int) -> list[int]:
     cur_bytes = xof.digest(xof_ix + _MATRIX_GEN_XOF_STEP_SIZE)[xof_ix:]
     xof_ix += _MATRIX_GEN_XOF_STEP_SIZE
     i = 0
-    while i < _MATRIX_GEN_XOF_STEP_SIZE:
+    while i < _MATRIX_GEN_XOF_STEP_SIZE and len(ret) < N:
       d1 = cur_bytes[i] + 256 * (cur_bytes[i+1] % 16)
       d2 = cur_bytes[i+1] // 16 + 16 * cur_bytes[i+2]
       if d1 < Q: ret.append(d1)
