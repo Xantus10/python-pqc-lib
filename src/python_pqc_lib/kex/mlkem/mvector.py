@@ -60,6 +60,33 @@ class MVector:
       _singleNTT(n)
     return MVector(ntt, isntt=True)
 
+  @staticmethod
+  def simpleInvNTT(n: np.typing.NDArray[Any]):
+    """
+    Perform an inverse NTT on a single polynomial
+
+    This function **modifies** the original array
+
+    Args:
+      n (int[]) - The polynomial 1D NDArray
+    """
+    i = 127
+    ln = 2
+    while ln <= 128:
+      start = 0
+      while start < 256:
+        zeta = ZETA[i]
+        i -= 1
+        for j in range(start, start + ln):
+          t = n[j]
+          n[j] = (n[j + ln] + t) % Q
+          n[j + ln] = (zeta * (n[j + ln] - t)) % Q
+        start += 2*ln
+      ln *= 2
+    for i in range(len(n)):
+      n[i] *= 3303
+      n[i] %= Q
+
   def invNTT(self) -> 'MVector':
     """
     Compute the inverse NTT of this vector
@@ -71,27 +98,10 @@ class MVector:
       ValueError: The vector is not an NTT representation
     """
     if not self.isntt: raise ValueError('Vector is not an NTT representation')
-    def _singleInvNTT(n: np.typing.NDArray[Any]):
-      i = 127
-      ln = 2
-      while ln <= 128:
-        start = 0
-        while start < 256:
-          zeta = ZETA[i]
-          i -= 1
-          for j in range(start, start + ln):
-            t = n[j]
-            n[j] = (n[j + ln] + t) % Q
-            n[j + ln] = (zeta * (n[j + ln] - t)) % Q
-          start += 2*ln
-        ln *= 2
-      for i in range(len(n)):
-        n[i] *= 3303
-        n[i] %= Q
 
     invntt = self.arr.copy()
     for n in invntt:
-      _singleInvNTT(n)
+      MVector.simpleInvNTT(n)
     return MVector(invntt, isntt=False)
 
   def __mul__(self, other: 'MVector') -> np.typing.NDArray[Any]:
