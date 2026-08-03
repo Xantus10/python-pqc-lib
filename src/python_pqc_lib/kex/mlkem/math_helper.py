@@ -14,8 +14,8 @@ def multiplyNTTs(pol1: NDArray[Any], pol2: NDArray[Any]) -> list[int]:
   Multiply NTT polynomials
 
   Args:
-    pol1 (int[]): First ntt polynomial
-    pol2 (int[]): Second ntt polynomial
+    pol1 (int[N]): First ntt polynomial
+    pol2 (int[N]): Second ntt polynomial
 
   Returns:
     The result ntt polynomial coefficients
