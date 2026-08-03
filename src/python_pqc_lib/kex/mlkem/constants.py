@@ -1,3 +1,8 @@
+"""
+Constants necessary for ML KEM
+"""
+
+
 Q = 3329
 """Modulus q"""
 N = 256
@@ -43,21 +48,24 @@ ZETA2 = [
 ]
 """Precomputed values of Zeta2"""
 
-MLKEM512 = [2, 3, 2, 10, 4]
+MLKEM_Parameters = list[int]
+"""(k, eta1, eta2, du, dv)"""
+
+MLKEM512: MLKEM_Parameters = [2, 3, 2, 10, 4]
 """
 Parameter set for ML-KEM-512
 
 (k, eta1, eta2, du, dv)
 """
 
-MLKEM768 = [3, 2, 2, 10, 4]
+MLKEM768: MLKEM_Parameters = [3, 2, 2, 10, 4]
 """
 Parameter set for ML-KEM-768
 
 (k, eta1, eta2, du, dv)
 """
 
-MLKEM1024 = [4, 2, 2, 11, 5]
+MLKEM1024: MLKEM_Parameters = [4, 2, 2, 11, 5]
 """
 Parameter set for ML-KEM-1024
 
