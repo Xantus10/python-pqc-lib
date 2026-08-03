@@ -138,4 +138,4 @@ class MVector:
     k = len(self.arr)
     if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
     new = (self.arr + other.arr) % Q
-    return MVector(new, isntt=True)
+    return MVector(new, isntt=self.isntt)
