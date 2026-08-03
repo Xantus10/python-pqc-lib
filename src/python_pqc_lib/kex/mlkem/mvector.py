@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import Any
 
-from .constants import Q, ZETA
+from .constants import N, Q, ZETA
 from .math_helper import multiplyNTTs
 
 class MVector:
@@ -10,6 +10,10 @@ class MVector:
   def __init__(self, np_array: np.typing.NDArray[Any], isntt = False):
     """
     A representation of a module vector
+
+    Args:
+      np_array (int[k][N]): NumPy array of the coefficients
+      isntt (bool): Are the coefficients ntt representations
     """
     self.arr = np_array
     self.isntt = isntt
@@ -20,7 +24,7 @@ class MVector:
     Construct a vector from a list of coefficients
 
     Args:
-      coefficients (int[][]): The coefficients of the polynomials
+      coefficients (int[k][N]): The coefficients of the polynomials
     """
     arr = np.array(coefficients, dtype=np.int64)
     return MVector(arr, isntt)
@@ -107,9 +111,31 @@ class MVector:
     """
     if not isinstance(other, type(self)): raise TypeError(f'Multiplication is not supported for MVector and {type(other).__class__.__name__}')
     if not (self.isntt and other.isntt): raise ValueError('Both operands need to be NTTs to be multiplied')
-    if len(self.arr) != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
-    res = []
-    for i in range(len(self.arr)):
-      res.append(multiplyNTTs(self.arr[i], other.arr[i]))
-    return MVector.from_coefficients(res, isntt=True)
+    k = len(self.arr)
+    if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
+    new = np.zeros((k, N), dtype=np.int64)
+    for i in range(k):
+      new[i] += multiplyNTTs(self.arr[i], other.arr[i])
+    return MVector(new, isntt=True)
 
+  def __add__(self, other: 'MVector') -> 'MVector':
+    """
+    MVector-MVector addition
+
+    Args:
+      other (MVector): The other vector
+
+    Returns:
+      A new result vector
+
+    Raises:
+      TypeError: Other operand is not of type MVector
+      ValueError: Both operands need to be either NTT or coefficient form
+      IndexError: The rank of the module vectors is not the same
+    """
+    if not isinstance(other, type(self)): raise TypeError(f'Addition is not supported for MVector and {type(other).__class__.__name__}')
+    if not (self.isntt == other.isntt): raise ValueError('Both operands need to be in the same domain (NTT vs coefficient)')
+    k = len(self.arr)
+    if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
+    new = (self.arr + other.arr) % Q
+    return MVector(new, isntt=True)
