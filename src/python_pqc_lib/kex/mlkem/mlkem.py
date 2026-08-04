@@ -151,3 +151,28 @@ class MLKEM:
     c1 = b''.join([byte_encode(compress(u.arr[i], self.du), self.du) for i in range(self.k)])
     c2 = byte_encode(compress(v, self.dv), self.dv)
     return c1 + c2
+
+  def __innerEncaps(self, random_m: bytes) -> tuple[bytes, bytes]:
+    """
+    Derive and encapsulate a secret key
+
+    Args:
+      random_m (bytes): A source of randomness (32 bytes)
+
+    Returns:
+      A tuple of (shared_key, encapsulated_key)
+    """
+    g = hashG(random_m + hashH(self.encaps_key))
+    shared_key, random_r = g[0:32], g[32:64]
+    encapsulated_key = self.__PKEEncrypt(shared_key, random_r)
+    return shared_key, encapsulated_key
+
+  def encaps(self) -> tuple[bytes, bytes]:
+    """
+    Generate and encapsulate a secret key
+
+    Returns:
+      A tuple of (shared_key, encapsulated_key)
+    """
+    random_m = token_bytes(32)
+    return self.__innerEncaps(random_m)
