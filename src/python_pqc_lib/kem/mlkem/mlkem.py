@@ -31,7 +31,7 @@ class MLKEM:
     self.__matrix: MMatrix = None
     # Byte keys
     self.encaps_key = None
-    self.decaps_key = None
+    self.__decaps_key = None
 
   def generateMatrix(self, matrix_seed: bytes) -> MMatrix:
     """
@@ -111,7 +111,7 @@ class MLKEM:
     """
     random_d = token_bytes(32)
     random_z = token_bytes(32)
-    self.encaps_key, self.decaps_key = self.__innerKeyGen(random_d, random_z)
+    self.encaps_key, self.__decaps_key = self.__innerKeyGen(random_d, random_z)
 
   def __PKEEncrypt(self, ek: bytes, m: bytes, random_r: bytes) -> bytes:
     """
@@ -225,15 +225,14 @@ class MLKEM:
     success = hmac.compare_digest(ciphertext, control_ciphertext)
     return shared_key if success else invalid_key
 
-  def Decapsulate(self, dk: bytes, ciphertext: bytes):
+  def Decapsulate(self, ciphertext: bytes):
     """
     Decrypt the ciphertext into a shared key
 
     Args:
-      dk (bytes): Decapsulation key
       ciphertext (bytes): The encapsulated shared key
 
     Returns:
       The shared key
     """
-    return self.__innerDecaps(dk, ciphertext)
+    return self.__innerDecaps(self.__decaps_key, ciphertext)
