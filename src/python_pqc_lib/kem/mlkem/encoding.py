@@ -96,7 +96,7 @@ def byte_encode(arr: np.typing.NDArray[Any], d: int) -> bytes:
       num = (num - b[i * d + j]) // 2
   return bits_to_bytes(b)
 
-def byte_decode(b: bytes, d: int) -> list[int]:
+def byte_decode(b: bytes, d: int) -> np.typing.NDArray[Any]:
   """
   Decode the integers into an 1D array
 
@@ -107,7 +107,7 @@ def byte_decode(b: bytes, d: int) -> list[int]:
     d (int): How many bits one integer takes up
 
   Returns:
-    A list of integers
+    An NDArray of integers
   """
   bits = bytes_to_bits(b)
   m = Q if d == 12 else 2**d
@@ -116,4 +116,4 @@ def byte_decode(b: bytes, d: int) -> list[int]:
     for j in range(d):
       ret[i] += bits[i * d + j] * (2**j)
     ret[i] %= m
-  return ret
+  return np.array(ret, dtype=np.int64)
