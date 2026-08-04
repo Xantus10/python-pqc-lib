@@ -170,7 +170,14 @@ class MLKEM:
 
     Returns:
       A tuple of (shared_key, encapsulated_key)
+
+    Raises:
+      TypeError: If the provided encapsulation key is not bytes
+      ValueError: The encapsulation key is not valid (invalid length or values)
     """
+    if not isinstance(ek, bytes): raise TypeError(f'Expected bytes for encapsulation key, got {type(ek).__class__.__name__}')
+    if len(ek) != 384 * self.k + 32: raise ValueError(f'Provided encapsulation key is of invalid length ({len(ek)} instead of {384 * self.k + 32})')
+    if ek[0:384 * self.k] != byte_encode(byte_decode(ek[0:384 * self.k], 12), 12): raise ValueError(f'Provided encapsulation key holds invalid values')
     random_m = token_bytes(32)
     return self.__innerEncaps(ek, random_m)
 
@@ -234,5 +241,11 @@ class MLKEM:
 
     Returns:
       The shared key
+
+    Raises:
+      TypeError: If the provided ciphertext is not bytes
+      ValueError: The ciphertext has invalid length
     """
+    if not isinstance(ciphertext, bytes): raise TypeError(f'Expected bytes for ciphertext, got {type(ciphertext).__class__.__name__}')
+    if len(ciphertext) != 32 * (self.du * self.k + self.dv): raise ValueError(f'Provided ciphertext is of invalid length ({len(ciphertext)} instead of {32 * (self.du * self.k + self.dv)})')
     return self.__innerDecaps(self.__decaps_key, ciphertext)
