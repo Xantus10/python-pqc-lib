@@ -110,10 +110,11 @@ def byte_decode(b: bytes, d: int) -> np.typing.NDArray[Any]:
     An NDArray of integers
   """
   bits = bytes_to_bits(b)
+  ln = len(bits) // d
   m = Q if d == 12 else 2**d
-  ret = [0 for _ in range(N)]
-  for i in range(N):
+  ret = np.zeros((ln,), dtype=np.int64)
+  for i in range(ln):
     for j in range(d):
       ret[i] += bits[i * d + j] * (2**j)
-    ret[i] %= m
-  return np.array(ret, dtype=np.int64)
+  ret %= m
+  return ret
