@@ -10,7 +10,7 @@ from .constants import MLKEM_Parameters, N, Q
 from .encoding import byte_encode, byte_decode, compress, decompress
 from .mmatrix import MMatrix
 from .mvector import MVector
-from .random_helper import generateSmallPolynomial, generateMatrixPolynomial, hashG, hashH, prf
+from .random_helper import generateSmallPolynomial, generateMatrixPolynomial, hashG, hashH, hashJ, prf
 
 class MLKEM:
   """Class representing an ML KEM state"""
@@ -103,12 +103,11 @@ class MLKEM:
     dk += ek + hashH(ek) + random_z
     return ek, dk
 
-  def KeyGen(self) -> tuple[bytes, bytes]:
+  def KeyGen(self):
     """
     Generate keys for ML KEM
 
-    Returns:
-      Byte form of the encapsulation and decapsulation key
+    Keys are stored internally
     """
     random_d = token_bytes(32)
     random_z = token_bytes(32)
@@ -127,7 +126,7 @@ class MLKEM:
       The ciphertext u+v
     """
     self.__matrix = self.generateMatrix(ek[-32:]).transpose()
-    public_vec = MVector.from_coefficients([byte_decode(ek[i:i+384], 12) for i in range(self.k)], isntt=True)
+    public_vec = MVector.from_coefficients([byte_decode(ek[i*384:(i+1)*384], 12) for i in range(self.k)], isntt=True)
     uniq_n = 0
     secret_vec = self.generateVector(random_r, uniq_n, self.eta1).NTT()
     uniq_n += self.k
@@ -135,7 +134,7 @@ class MLKEM:
     uniq_n += self.k
     error_pol2 = generateSmallPolynomial(prf(random_r, uniq_n, self.eta2), self.eta2)
     u = (self.__matrix @ secret_vec).invNTT() + error_vec1
-    m_encoded = decompress(np.array(byte_decode(m, 1), dtype=np.int64), 1)
+    m_encoded = decompress(byte_decode(m, 1), 1)
     v = public_vec * secret_vec
     MVector.simpleInvNTT(v)
     v += m_encoded
@@ -159,7 +158,7 @@ class MLKEM:
     """
     g = hashG(random_m + hashH(ek))
     shared_key, random_r = g[0:32], g[32:64]
-    encapsulated_key = self.__PKEEncrypt(ek, shared_key, random_r)
+    encapsulated_key = self.__PKEEncrypt(ek, random_m, random_r)
     return shared_key, encapsulated_key
 
   def Encapsulate(self, ek: bytes) -> tuple[bytes, bytes]:
@@ -189,13 +188,17 @@ class MLKEM:
     """
     ct_boundary = 32 * self.du * self.k
     c1, c2 = ciphertext[0:ct_boundary], ciphertext[ct_boundary:]
-    u_arr = np.zeros((self.k, N))
+    u_arr = np.zeros((self.k, N), dtype=np.int64)
     for i in range(self.k):
       u_arr[i] = decompress(byte_decode(c1[i * 32 * self.du:(i+1) * 32 * self.du], self.du), self.du)
     u = MVector(u_arr)
     v = decompress(byte_decode(c2, self.dv), self.dv)
-    secret_vec = MVector.from_coefficients([byte_decode(dk[i:i+384], 12) for i in range(self.k)], isntt=True)
-    m_encoded = v - MVector.simpleInvNTT(secret_vec * u.NTT())
+    secret_vec = MVector.from_coefficients([byte_decode(dk[i*384:(i+1)*384], 12) for i in range(self.k)], isntt=True)
+    mult = secret_vec * u.NTT()
+    mult %= Q
+    MVector.simpleInvNTT(mult)
+    m_encoded = v - mult
+    m_encoded %= Q
     return byte_encode(compress(m_encoded, 1), 1)
 
   def __innerDecaps(self, dk: bytes, ciphertext: bytes):
@@ -214,6 +217,23 @@ class MLKEM:
     enc_key = dk[384 * self.k:keys_boundary]
     ek_hash = dk[keys_boundary:keys_boundary + 32]
     random_z = dk[keys_boundary + 32:keys_boundary + 64]
-    
+    msg = self.__PKEDecrypt(dec_key, ciphertext)
+    g = hashG(msg + ek_hash)
+    shared_key, random_r = g[0:32], g[32:64]
+    invalid_key = hashJ(random_z + ciphertext)
+    control_ciphertext = self.__PKEEncrypt(enc_key, msg, random_r)
+    success = hmac.compare_digest(ciphertext, control_ciphertext)
+    return shared_key if success else invalid_key
 
-# Rework it to really match the standard (no saving secret vec, etc., just save the encaps and decaps key (+ matrix))
+  def Decapsulate(self, dk: bytes, ciphertext: bytes):
+    """
+    Decrypt the ciphertext into a shared key
+
+    Args:
+      dk (bytes): Decapsulation key
+      ciphertext (bytes): The encapsulated shared key
+
+    Returns:
+      The shared key
+    """
+    return self.__innerDecaps(dk, ciphertext)
