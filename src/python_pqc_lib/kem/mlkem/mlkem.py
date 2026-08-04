@@ -2,10 +2,11 @@
 Main ML KEM class
 """
 import numpy as np
+import hmac
 
 from secrets import token_bytes
 
-from .constants import MLKEM_Parameters, Q
+from .constants import MLKEM_Parameters, N, Q
 from .encoding import byte_encode, byte_decode, compress, decompress
 from .mmatrix import MMatrix
 from .mvector import MVector
@@ -13,13 +14,12 @@ from .random_helper import generateSmallPolynomial, generateMatrixPolynomial, ha
 
 class MLKEM:
   """Class representing an ML KEM state"""
-  def __init__(self, parameters: MLKEM_Parameters, encapsulation_key: bytes = None):
+  def __init__(self, parameters: MLKEM_Parameters):
     """
     Class representing an ML KEM state
-    
+
     Args:
       parameters (MLKEM_Parameters): Special list of parameters for ML KEM
-      encapsulation_key (bytes): Recieved encapsulation key to use for encapsulation
     """
     # Parameters
     self.k = parameters[0]
@@ -29,17 +29,9 @@ class MLKEM:
     self.dv = parameters[4]
     # Raw math objects
     self.__matrix: MMatrix = None
-    self.__secret_vec: MVector = None
-    self.__public_vec: MVector = None
     # Byte keys
     self.encaps_key = None
     self.decaps_key = None
-    if encapsulation_key:
-      self.encaps_key = encapsulation_key
-      self.__matrix = self.generateMatrix(self.encaps_key[-32:]).transpose()
-      self.__public_vec = MVector.from_coefficients([byte_decode(self.encaps_key[i:i+384], 12) for i in range(self.k)], isntt=True)
-    else:
-      self.encaps_key, self.decaps_key = self.__keyGen()
 
   def generateMatrix(self, matrix_seed: bytes) -> MMatrix:
     """
@@ -87,13 +79,13 @@ class MLKEM:
     matrix_seed, error_seed = g[0:32], g[32:64]
     self.__matrix = self.generateMatrix(matrix_seed)
     uniq_n = 0
-    self.__secret_vec = self.generateVector(error_seed, uniq_n, self.eta1).NTT()
+    secret_vec = self.generateVector(error_seed, uniq_n, self.eta1).NTT()
     uniq_n += self.k
     error_vec = self.generateVector(error_seed, uniq_n, self.eta1).NTT()
     uniq_n += self.k
-    self.__public_vec = (self.__matrix @ self.__secret_vec) + error_vec
-    encaps_key = b''.join([byte_encode(self.__public_vec.arr[i], 12) for i in range(self.k)]) + matrix_seed
-    decaps_key = b''.join([byte_encode(self.__secret_vec.arr[i], 12) for i in range(self.k)])
+    public_vec = (self.__matrix @ secret_vec) + error_vec
+    encaps_key = b''.join([byte_encode(public_vec.arr[i], 12) for i in range(self.k)]) + matrix_seed
+    decaps_key = b''.join([byte_encode(secret_vec.arr[i], 12) for i in range(self.k)])
     return encaps_key, decaps_key
 
   def __innerKeyGen(self, random_d: bytes, random_z: bytes) -> tuple[bytes, bytes]:
@@ -111,7 +103,7 @@ class MLKEM:
     dk += ek + hashH(ek) + random_z
     return ek, dk
 
-  def __keyGen(self) -> tuple[bytes, bytes]:
+  def KeyGen(self) -> tuple[bytes, bytes]:
     """
     Generate keys for ML KEM
 
@@ -120,29 +112,31 @@ class MLKEM:
     """
     random_d = token_bytes(32)
     random_z = token_bytes(32)
-    return self.__innerKeyGen(random_d, random_z)
+    self.encaps_key, self.decaps_key = self.__innerKeyGen(random_d, random_z)
 
-
-  def __PKEEncrypt(self, m: bytes, random_r: bytes) -> bytes:
+  def __PKEEncrypt(self, ek: bytes, m: bytes, random_r: bytes) -> bytes:
     """
     Encapsulate a secret message m
 
     Args:
+      ek (bytes): The encapsulation key to use
       m (bytes): The secret message (32 bytes)
       random_r (bytes): A source of randomness (32 bytes)
 
     Returns:
       The ciphertext u+v
     """
+    self.__matrix = self.generateMatrix(ek[-32:]).transpose()
+    public_vec = MVector.from_coefficients([byte_decode(ek[i:i+384], 12) for i in range(self.k)], isntt=True)
     uniq_n = 0
-    self.__secret_vec = self.generateVector(random_r, uniq_n, self.eta1).NTT()
+    secret_vec = self.generateVector(random_r, uniq_n, self.eta1).NTT()
     uniq_n += self.k
     error_vec1 = self.generateVector(random_r, uniq_n, self.eta2)
     uniq_n += self.k
     error_pol2 = generateSmallPolynomial(prf(random_r, uniq_n, self.eta2), self.eta2)
-    u = (self.__matrix @ self.__secret_vec).invNTT() + error_vec1
+    u = (self.__matrix @ secret_vec).invNTT() + error_vec1
     m_encoded = decompress(np.array(byte_decode(m, 1), dtype=np.int64), 1)
-    v = self.__public_vec * self.__secret_vec
+    v = public_vec * secret_vec
     MVector.simpleInvNTT(v)
     v += m_encoded
     v %= Q
@@ -152,27 +146,74 @@ class MLKEM:
     c2 = byte_encode(compress(v, self.dv), self.dv)
     return c1 + c2
 
-  def __innerEncaps(self, random_m: bytes) -> tuple[bytes, bytes]:
+  def __innerEncaps(self, ek: bytes, random_m: bytes) -> tuple[bytes, bytes]:
     """
     Derive and encapsulate a secret key
 
     Args:
+      ek (bytes): The encapsulation key to use
       random_m (bytes): A source of randomness (32 bytes)
 
     Returns:
       A tuple of (shared_key, encapsulated_key)
     """
-    g = hashG(random_m + hashH(self.encaps_key))
+    g = hashG(random_m + hashH(ek))
     shared_key, random_r = g[0:32], g[32:64]
-    encapsulated_key = self.__PKEEncrypt(shared_key, random_r)
+    encapsulated_key = self.__PKEEncrypt(ek, shared_key, random_r)
     return shared_key, encapsulated_key
 
-  def encaps(self) -> tuple[bytes, bytes]:
+  def Encapsulate(self, ek: bytes) -> tuple[bytes, bytes]:
     """
     Generate and encapsulate a secret key
+
+    Args:
+      ek (bytes): The encapsulation key to use
 
     Returns:
       A tuple of (shared_key, encapsulated_key)
     """
     random_m = token_bytes(32)
-    return self.__innerEncaps(random_m)
+    return self.__innerEncaps(ek, random_m)
+
+
+  def __PKEDecrypt(self, dk: bytes, ciphertext: bytes) -> bytes:
+    """
+    Decrypt the ciphertext into a shared key
+
+    Args:
+      dk (bytes): Decapsulation key
+      ciphertext (bytes): The encapsulated shared key
+
+    Returns:
+      The shared key
+    """
+    ct_boundary = 32 * self.du * self.k
+    c1, c2 = ciphertext[0:ct_boundary], ciphertext[ct_boundary:]
+    u_arr = np.zeros((self.k, N))
+    for i in range(self.k):
+      u_arr[i] = decompress(byte_decode(c1[i * 32 * self.du:(i+1) * 32 * self.du], self.du), self.du)
+    u = MVector(u_arr)
+    v = decompress(byte_decode(c2, self.dv), self.dv)
+    secret_vec = MVector.from_coefficients([byte_decode(dk[i:i+384], 12) for i in range(self.k)], isntt=True)
+    m_encoded = v - MVector.simpleInvNTT(secret_vec * u.NTT())
+    return byte_encode(compress(m_encoded, 1), 1)
+
+  def __innerDecaps(self, dk: bytes, ciphertext: bytes):
+    """
+    Decrypt the ciphertext into a shared key
+
+    Args:
+      dk (bytes): Decapsulation key
+      ciphertext (bytes): The encapsulated shared key
+
+    Returns:
+      The shared key
+    """
+    keys_boundary = 768 * self.k + 32
+    dec_key = dk[0:384 * self.k]
+    enc_key = dk[384 * self.k:keys_boundary]
+    ek_hash = dk[keys_boundary:keys_boundary + 32]
+    random_z = dk[keys_boundary + 32:keys_boundary + 64]
+    
+
+# Rework it to really match the standard (no saving secret vec, etc., just save the encaps and decaps key (+ matrix))
