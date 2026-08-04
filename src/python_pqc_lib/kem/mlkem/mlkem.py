@@ -75,15 +75,19 @@ class MLKEM:
     Returns:
       Byte form of the encapsulation and decapsulation key
     """
+    # Derive the matrix and CBD seeds
     g = hashG(random_d + self.k.to_bytes())
     matrix_seed, error_seed = g[0:32], g[32:64]
+    # Generate A, s, e
     self.__matrix = self.generateMatrix(matrix_seed)
     uniq_n = 0
     secret_vec = self.generateVector(error_seed, uniq_n, self.eta1).NTT()
     uniq_n += self.k
     error_vec = self.generateVector(error_seed, uniq_n, self.eta1).NTT()
     uniq_n += self.k
+    # Compute t
     public_vec = (self.__matrix @ secret_vec) + error_vec
+    # Return the byte values of ek, dk
     encaps_key = b''.join([byte_encode(public_vec.arr[i], 12) for i in range(self.k)]) + matrix_seed
     decaps_key = b''.join([byte_encode(secret_vec.arr[i], 12) for i in range(self.k)])
     return encaps_key, decaps_key
@@ -125,15 +129,20 @@ class MLKEM:
     Returns:
       The ciphertext u+v
     """
+    # Generate A
     self.__matrix = self.generateMatrix(ek[-32:]).transpose()
+    # Build t
     public_vec = MVector.from_coefficients([byte_decode(ek[i*384:(i+1)*384], 12) for i in range(self.k)], isntt=True)
+    # Generate y, e1, e2
     uniq_n = 0
     secret_vec = self.generateVector(random_r, uniq_n, self.eta1).NTT()
     uniq_n += self.k
     error_vec1 = self.generateVector(random_r, uniq_n, self.eta2)
     uniq_n += self.k
     error_pol2 = generateSmallPolynomial(prf(random_r, uniq_n, self.eta2), self.eta2)
+    # Compute public encaps vector u
     u = (self.__matrix @ secret_vec).invNTT() + error_vec1
+    # Compute ciphertext v
     m_encoded = decompress(byte_decode(m, 1), 1)
     v = public_vec * secret_vec
     MVector.simpleInvNTT(v)
@@ -141,6 +150,7 @@ class MLKEM:
     v %= Q
     v += error_pol2
     v %= Q
+    # Get the byte representations of u, v
     c1 = b''.join([byte_encode(compress(u.arr[i], self.du), self.du) for i in range(self.k)])
     c2 = byte_encode(compress(v, self.dv), self.dv)
     return c1 + c2
@@ -195,12 +205,16 @@ class MLKEM:
     """
     ct_boundary = 32 * self.du * self.k
     c1, c2 = ciphertext[0:ct_boundary], ciphertext[ct_boundary:]
+    # Reconstruct u
     u_arr = np.zeros((self.k, N), dtype=np.int64)
     for i in range(self.k):
       u_arr[i] = decompress(byte_decode(c1[i * 32 * self.du:(i+1) * 32 * self.du], self.du), self.du)
     u = MVector(u_arr)
+    # Reconstruct v
     v = decompress(byte_decode(c2, self.dv), self.dv)
+    # Decode s
     secret_vec = MVector.from_coefficients([byte_decode(dk[i*384:(i+1)*384], 12) for i in range(self.k)], isntt=True)
+    # Compute m
     mult = secret_vec * u.NTT()
     mult %= Q
     MVector.simpleInvNTT(mult)
@@ -219,16 +233,22 @@ class MLKEM:
     Returns:
       The shared key
     """
+    # Extract all the parts of the dk
     keys_boundary = 768 * self.k + 32
     dec_key = dk[0:384 * self.k]
     enc_key = dk[384 * self.k:keys_boundary]
     ek_hash = dk[keys_boundary:keys_boundary + 32]
     random_z = dk[keys_boundary + 32:keys_boundary + 64]
+    # Decrypt random_m
     msg = self.__PKEDecrypt(dec_key, ciphertext)
+    # Derive the shared key and random_r like in Encaps
     g = hashG(msg + ek_hash)
     shared_key, random_r = g[0:32], g[32:64]
+    # Always compute both variants of the shared key
     invalid_key = hashJ(random_z + ciphertext)
+    # Re-Encapsulate the random_m to verify correctness of the ciphertext
     control_ciphertext = self.__PKEEncrypt(enc_key, msg, random_r)
+    # Constant time comparison
     success = hmac.compare_digest(ciphertext, control_ciphertext)
     return shared_key if success else invalid_key
 
