@@ -1,3 +1,3 @@
 from .mlkem.mlkem import MLKEM
-from .mlkem.constants import MLKEM512, MLKEM768, MLKEM1024
+from .mlkem.constants import MLKEM_512, MLKEM_768, MLKEM_1024
 

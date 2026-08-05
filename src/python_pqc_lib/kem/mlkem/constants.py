@@ -51,21 +51,21 @@ ZETA2 = [
 MLKEM_Parameters = list[int]
 """(k, eta1, eta2, du, dv)"""
 
-MLKEM512: MLKEM_Parameters = [2, 3, 2, 10, 4]
+MLKEM_512: MLKEM_Parameters = [2, 3, 2, 10, 4]
 """
 Parameter set for ML-KEM-512
 
 (k, eta1, eta2, du, dv)
 """
 
-MLKEM768: MLKEM_Parameters = [3, 2, 2, 10, 4]
+MLKEM_768: MLKEM_Parameters = [3, 2, 2, 10, 4]
 """
 Parameter set for ML-KEM-768
 
 (k, eta1, eta2, du, dv)
 """
 
-MLKEM1024: MLKEM_Parameters = [4, 2, 2, 11, 5]
+MLKEM_1024: MLKEM_Parameters = [4, 2, 2, 11, 5]
 """
 Parameter set for ML-KEM-1024
 
