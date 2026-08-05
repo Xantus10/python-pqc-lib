@@ -11,7 +11,11 @@ Currently supports the following algorithms:
 - Digital signature
     - blank
 
-### Security notice
+## Dependencies
+
+- numpy
+
+## Security notice
 
 While the solution is always tested to be functional and best effort was made to adhere to the NIST standards and specifications, I do not guarantee that the algorithm is secure.
 
