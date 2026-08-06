@@ -2,11 +2,13 @@ import numpy as np
 
 from hashlib import shake_128 as g, shake_256 as h
 
+from typing import Any
+
 from .encoding import bitUnpack, bytes_to_bits, coeffFromHalfByte, coeffFromThreeBytes
 from .xof import XOF
 
 
-def sampleInBall(seed: bytes, tau: int):
+def sampleInBall(seed: bytes, tau: int) -> np.typing.NDArray[Any]:
   """
   Sample a random polynomial with coefficients -1...1
 
@@ -28,7 +30,7 @@ def sampleInBall(seed: bytes, tau: int):
     ret[j] = pow(-1, signs[i + tau - 256])
   return ret
 
-def sampleMatrixPol(seed: bytes, inp_j: int, inp_i: int):
+def sampleMatrixPol(seed: bytes, inp_j: int, inp_i: int) -> np.typing.NDArray[Any]:
   """
   Sample a random polynomial with coefficients 0...q-1
 
@@ -50,7 +52,7 @@ def sampleMatrixPol(seed: bytes, inp_j: int, inp_i: int):
       i += 1
   return ret
 
-def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int):
+def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int) -> np.typing.NDArray[Any]:
   """
   Sample a random polynomial with coefficients -eta...eta
 
@@ -77,7 +79,7 @@ def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int):
       i += 1
   return ret
 
-def expandMask(seed: bytes, gamma1: int, l: int, uniq: int):
+def expandMask(seed: bytes, gamma1: int, l: int, uniq: int) -> np.typing.NDArray[Any]:
   """
   Sample a random polynomial with coefficients -gamma+1...gamma
 
