@@ -172,3 +172,52 @@ def bitUnpack(b: bytes, range_low: int, range_high: int) -> np.typing.NDArray[An
   return ret
 
 
+def hintBitPack(h: np.typing.NDArray[Any], omega: int) -> bytes:
+  """
+  BitPack a hint MVector efficiently
+
+  Args:
+    h (int[k][N]): The hint MVector
+    omega (int): How many non-zero coefficients (at most) are in h
+
+  Returns:
+    The hint encoded in bytes
+  """
+  ret = bytearray(omega + len(h))
+  ix = 0
+  for i in range(len(h)):
+    for j in range(256):
+      if h[i, j] != 0:
+        ret[ix] = j
+        ix += 1
+    ret[omega + i] = ix
+  return bytes(ret)
+
+def hintBitUnpack(b: bytes, k: int, omega: int) -> np.typing.NDArray[Any]:
+  """
+  BitPack a hint MVector efficiently
+
+  Args:
+    b (bytes): The encoded hint
+    k (int): Rank of the result MVector
+    omega (int): How many non-zero coefficients (at most) are in hint
+
+  Returns:
+    Hint NDArray with coefficients
+
+  Raises:
+    IndexError: The bytes input is malformed / incorrectly formatted
+  """
+  ret = np.zeros((k, 256), dtype=np.int64)
+  ix = 0
+  for i in range(k):
+    if b[omega + i] < ix or b[omega + i] > omega: raise IndexError('Malformed bytes input for hint')
+    first = ix
+    while ix < b[omega + i]:
+      if ix > first:
+        if b[ix - 1] >= b[ix]: raise IndexError('Malformed bytes input for hint')
+      ret[i, b[ix]] = 1
+      ix += 1
+  for i in range(ix, omega):
+    if b[i] != 0: raise IndexError('Malformed bytes input for hint')
+  return ret
