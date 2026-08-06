@@ -253,6 +253,24 @@ def power2Round(r: int, d: int) -> tuple[int, int]:
   r0 = centered_mod(r_pos, 2**d)
   return (r_pos - r0) // (2**d), r0
 
+def power2RoundVec(r: np.typing.NDArray[Any], d: int) -> tuple[np.typing.NDArray[Any], np.typing.NDArray[Any]]:
+  """
+  Apply the power2Round function to all numbers in an NDArray and return the mult and const arrays
+
+  Args:
+    r (int[k][N]): The 2D MVector NDArray
+    d (int): Number of bits
+
+  Returns:
+    Two new NDArrays mult[] and const[]
+  """
+  mult = np.zeros(r.shape, dtype=np.int64)
+  const = np.zeros(r.shape, dtype=np.int64)
+  for i in range(r.shape[0]):
+    for j in range(r.shape[1]):
+      mult[i, j], const[i, j] = power2Round(r[i, j], d)
+  return mult, const
+
 def decompose(r: int, gamma2: int) -> tuple[int, int]:
   """
   Decompose an integer into two parts - multiplier and constant
