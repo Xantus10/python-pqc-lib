@@ -74,20 +74,19 @@ def bits_to_bytes(data: list[int]) -> bytes: # Same as ML KEM
   return bytes(ret)
 
 
-def coeffFromThreeBytes(b0: bytes, b1: bytes, b2: bytes) -> int | None:
+def coeffFromThreeBytes(b: bytes) -> int | None:
   """
   Create an integer coefficient in range 0...q-1 from three byte values
 
   Args:
-    b0 (bytes): First byte value
-    b1 (bytes): Second byte value
-    b2 (bytes): Third byte value
+    b (bytes): 3 bytes
 
   Returns:
     The generated integer or None
   """
+  b2 = b[2]
   if b2 > 127: b2 -= 128
-  z = 65536 * b2[0] + 256 * b1[0] + b0[0]
+  z = 65536 * b2 + 256 * b[1] + b[0]
   if z < Q: return z
   return None
 
@@ -149,7 +148,7 @@ def simpleBitUnpack(b: bytes, range_high: int) -> np.typing.NDArray[Any]:
   """
   bit_len = range_high.bit_length()
   z = bytes_to_bits(b)
-  ret = np.array([bit for i in range(256) for bit in bits_to_int(z[i * bit_len:(i+1) * bit_len])], np.int64)
+  ret = np.array([bits_to_int(z[i * bit_len:(i+1) * bit_len]) for i in range(256)], np.int64)
   return ret
 
 def bitUnpack(b: bytes, range_low: int, range_high: int) -> np.typing.NDArray[Any]:
@@ -166,7 +165,7 @@ def bitUnpack(b: bytes, range_low: int, range_high: int) -> np.typing.NDArray[An
   """
   bit_len = (-range_low + range_high).bit_length()
   z = bytes_to_bits(b)
-  ret = np.array([bit for i in range(256) for bit in bits_to_int(z[i * bit_len:(i+1) * bit_len])], np.int64)
+  ret = np.array([bits_to_int(z[i * bit_len:(i+1) * bit_len]) for i in range(256)], np.int64)
   ret *= -1
   ret += range_high
   return ret
