@@ -15,7 +15,7 @@ class MMatrix:
       np_array (int[k][l][N]): NumPy array of the ntt matrix coefficients
     """
     self.arr = np_array
-    self.k, self.l = np_array.shape
+    self.k, self.l, _ = np_array.shape
 
   @staticmethod
   def from_coefficients(coefficients: list[list[int]]) -> 'MMatrix':
