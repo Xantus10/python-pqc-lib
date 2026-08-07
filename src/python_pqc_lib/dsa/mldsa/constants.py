@@ -62,3 +62,12 @@ Parameter set for ML-DSA-87
 
 (d, tau, lambda, gamma1, gamma2, k, l, eta, omega)
 """
+
+SIGN_BOUND = 814 + 200
+"""Safety loop bound for Sign_internal"""
+SMALL_POL_BOUND = 481 + 100
+"""Safety loop bound for sampleSmallPol"""
+MATRIX_POL_BOUND = 298 + 100
+"""Safety loop bound for sampleMatrixPol"""
+SAMPLE_BALL_BOUND = 121 + 100
+"""Safety loop bound for sampleInBall"""

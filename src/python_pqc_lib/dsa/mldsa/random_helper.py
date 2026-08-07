@@ -4,6 +4,7 @@ from hashlib import shake_128 as g, shake_256 as h
 
 from typing import Any
 
+from .constants import SMALL_POL_BOUND, MATRIX_POL_BOUND, SAMPLE_BALL_BOUND
 from .encoding import bitUnpack, bytes_to_bits, coeffFromHalfByte, coeffFromThreeBytes
 from .xof import XOF
 
@@ -18,14 +19,20 @@ def sampleInBall(seed: bytes, tau: int) -> np.typing.NDArray[Any]:
 
   Returns:
     NDArray of the coefficients
+
+  Raises:
+    RuntimeError: Safety bound was exceeded
   """
   ret = np.zeros((256,), dtype=np.int64)
   xof = XOF(h(seed))
   signs = bytes_to_bits(xof.Squeeze(8))
   for i in range(256 - tau, 256):
-    j = xof.Squeeze(1)
+    j = xof.Squeeze(1)[0]
+    safety_index = 0
     while j > i:
-      xof.Squeeze(1)
+      j = xof.Squeeze(1)[0]
+      safety_index += 1
+      if safety_index > SAMPLE_BALL_BOUND: RuntimeError('ML-DSA: SampleInBall entered infinite while loop')
     ret[i] = ret[j]
     ret[j] = pow(-1, signs[i + tau - 256])
   return ret
@@ -41,15 +48,21 @@ def sampleMatrixPol(seed: bytes, inp_j: int, inp_i: int) -> np.typing.NDArray[An
 
   Returns:
     NDArray of the coefficients
+
+  Raises:
+    RuntimeError: Safety bound was exceeded
   """
   ret = np.zeros((256,), dtype=np.int64)
   xof = XOF(g(seed + inp_j.to_bytes() + inp_i.to_bytes()))
   i = 0
+  safety_index = 0
   while i < 256:
     cand = coeffFromThreeBytes(xof.Squeeze(3))
     if not cand is None:
       ret[i] = cand
       i += 1
+    safety_index += 1
+    if safety_index > MATRIX_POL_BOUND: RuntimeError('ML-DSA: SampleMatrixPol entered infinite while loop')
   return ret
 
 def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int) -> np.typing.NDArray[Any]:
@@ -63,10 +76,14 @@ def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int) -> np.typing.NDArr
 
   Returns:
     NDArray of the coefficients
+
+  Raises:
+    RuntimeError: Safety bound was exceeded
   """
   ret = np.zeros((256,), dtype=np.int64)
   xof = XOF(g(seed + uniq2B.to_bytes(2, byteorder='little')))
   i = 0
+  safety_index = 0
   while i < 256:
     b = xof.Squeeze(1)
     z1 = coeffFromHalfByte(b[0] % 16, eta)
@@ -77,6 +94,8 @@ def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int) -> np.typing.NDArr
     if not z2 is None and i < 256:
       ret[i] = z2
       i += 1
+    safety_index += 1
+    if safety_index > SMALL_POL_BOUND: RuntimeError('ML-DSA: SampleSmallPolynomial entered infinite while loop')
   return ret
 
 def expandMask(seed: bytes, gamma1: int, l: int, uniq: int) -> np.typing.NDArray[Any]:
