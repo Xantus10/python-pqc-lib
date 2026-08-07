@@ -192,3 +192,14 @@ class MVector:
     if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
     new = (self.arr + other.arr) % Q
     return MVector(new, isntt=self.isntt)
+
+  def infinityNorm(self) -> int:
+    """
+    Return the max coefficient under centered_mod Q
+
+    Returns:
+      The largest abs coefficient in the MVector
+    """
+    mod = self.arr % Q
+    centered = np.where(mod > ((Q-1) // 2), mod - Q, mod)
+    return int(np.max(np.abs(centered)))
