@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 
 from typing import Any
@@ -18,7 +20,7 @@ class MVector:
     self.isntt = isntt
 
   @staticmethod
-  def from_coefficients(coefficients: list[list[int]], isntt = False) -> 'MVector':
+  def from_coefficients(coefficients: list[list[int]], isntt = False) -> MVector:
     """
     Construct a vector from a list of coefficients
 
@@ -52,7 +54,7 @@ class MVector:
         start += 2*ln
       ln //= 2
 
-  def NTT(self) -> 'MVector':
+  def NTT(self) -> MVector:
     """
     Compute the NTT representation of this vector
 
@@ -90,13 +92,13 @@ class MVector:
         for j in range(start, start + ln):
           t = n[j]
           n[j] = (n[j + ln] + t) % Q
-          n[j + ln] = (zeta * (n[j + ln] - t)) % Q
+          n[j + ln] = (zeta * ((n[j + ln] - t) % Q)) % Q
         start += 2*ln
       ln *= 2
     n *= 8347681
     n %= Q
 
-  def invNTT(self) -> 'MVector':
+  def invNTT(self) -> MVector:
     """
     Compute the inverse NTT of this vector
 
@@ -113,7 +115,7 @@ class MVector:
       MVector.simpleInvNTT(n)
     return MVector(invntt, isntt=False)
 
-  def __mul__(self, other: 'MVector' | np.typing.NDArray[Any]) -> np.typing.NDArray[Any] | 'MVector':
+  def __mul__(self, other: MVector | np.typing.NDArray[Any]) -> np.typing.NDArray[Any] | MVector:
     """
     MVector multiplication
 
@@ -143,13 +145,13 @@ class MVector:
     elif isinstance(other, type(self.arr)):
       if not self.isntt: raise ValueError('Self is not NTT and cannot be multiplied')
       new = self.arr.copy()
-      for i in range(k):
+      for i in range(len(new)):
         new[i] *= other
       return MVector(new, isntt=True)
     else:
       raise TypeError(f'Multiplication is not supported for MVector and {type(other).__class__.__name__}')
 
-  def __add__(self, other: 'MVector') -> 'MVector':
+  def __add__(self, other: MVector) -> MVector:
     """
     MVector-MVector addition
 
@@ -171,7 +173,7 @@ class MVector:
     new = (self.arr + other.arr) % Q
     return MVector(new, isntt=self.isntt)
 
-  def __sub__(self, other: 'MVector') -> 'MVector':
+  def __sub__(self, other: MVector) -> MVector:
     """
     MVector-MVector subtraction
 
@@ -203,7 +205,7 @@ class MVector:
     centered = self.centered_modQ()
     return int(np.max(np.abs(centered.arr)))
 
-  def centered_modQ(self) -> 'MVector':
+  def centered_modQ(self) -> MVector:
     """
     Return the result MVector with coefficients centered mod Q
 
