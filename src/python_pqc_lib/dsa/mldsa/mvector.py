@@ -140,18 +140,20 @@ class MVector:
       if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
       new = np.zeros((256,), dtype=np.int64)
       for i in range(k):
-        new += self.arr[i] * other.arr[i]
+        new += (self.arr[i] * other.arr[i]) % Q
       return new
     elif isinstance(other, type(self.arr)):
       if not self.isntt: raise ValueError('Self is not NTT and cannot be multiplied')
       new = self.arr.copy()
       for i in range(len(new)): # Its an NDArray, I think the loop might be unnecessary
         new[i] *= other
+        new[i] %= Q
       return MVector(new, isntt=True)
     elif isinstance(other, int):
       new = self.arr.copy()
       for i in range(len(new)):
         new[i] *= other
+        new[i] %= Q
       return MVector(new, isntt=self.isntt)
     else:
       raise TypeError(f'Multiplication is not supported for MVector and {type(other).__class__.__name__}')
