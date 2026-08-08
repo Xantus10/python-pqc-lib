@@ -7,7 +7,8 @@ from secrets import token_bytes
 from hashlib import sha256, sha512, shake_128
 
 from .constants import MLDSA_Parameters, Q, SIGN_BOUND
-from .encoding import power2RoundVec, simpleBitPack, bitPack, simpleBitUnpack, bitUnpack, highBits, lowBits, makeHint, hintBitPack
+from .encoding import power2RoundVec, simpleBitPack, bitPack, simpleBitUnpack, bitUnpack, \
+                      highBits, lowBits, makeHint, useHint, hintBitPack, hintBitUnpack
 from .mmatrix import MMatrix
 from .mvector import MVector
 from .random_helper import sampleInBall, sampleMatrixPol, sampleSmallPolynomial, h, expandMask
@@ -106,7 +107,6 @@ class MLDSA:
     """
     random_seed = token_bytes(32)
     self.public_key, self.__secret_key = self.__innerKeyGen(random_seed)
-    print(len(self.public_key), len(self.__secret_key))
 
 
   def __innerSign(self, secret_key: bytes, message: bytes, random_seed: bytes) -> bytes:
@@ -138,8 +138,9 @@ class MLDSA:
     ).NTT()
     tvec_step_size = 32 * self.d
     t0 = MVector.from_coefficients(
-      [bitUnpack(secret_key[i:i+svec_step_size], -(2**(self.d-1)) + 1, 2**(self.d-1)) for i in range(svec2_end, svec2_end + tvec_step_size * self.k, tvec_step_size)]
-    ).NTT()
+      [bitUnpack(secret_key[i:i+tvec_step_size], -(2**(self.d-1)) + 1, 2**(self.d-1)) for i in range(svec2_end, svec2_end + tvec_step_size * self.k, tvec_step_size)]
+    )
+    t0 = t0.NTT()
 
     self.__matrix = self.generateMatrix(matrix_seed)
     mi = h(pk_hash + message).digest(64)
@@ -223,3 +224,103 @@ class MLDSA:
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerSign(self.__secret_key, updated_message, random_seed)
 
+
+  def __innerVerify(self, public_key: bytes, message: bytes, sig: bytes) -> bool:
+    """
+    Mathematically verify the signature
+
+    Args:
+      public_key (bytes): The public key to verify with
+      message (bytes): The signed message to verify
+      sig (bytes): The signature
+
+    Returns:
+      True if the signature matches
+    """
+    matrix_seed = public_key[0:32]
+    t1_step_size = ((Q-1).bit_length() - self.d) * 32
+    t1 = MVector.from_coefficients(
+      [simpleBitUnpack(public_key[i:i+t1_step_size], (2**((Q-1).bit_length() - self.d)) - 1) for i in range(32, 32 + t1_step_size * self.k, t1_step_size)]
+    )
+
+    commit_hash = sig[0:self.lambd // 4]
+    z_step_size = 32 * (1 + (self.gamma1 - 1).bit_length())
+    hint_start = len(sig) - self.omega - self.k
+    z = MVector.from_coefficients(
+      [bitUnpack(sig[i:i+z_step_size], -self.gamma1 + 1, self.gamma1) for i in range(self.lambd//4, hint_start, z_step_size)]
+    )
+    hint = hintBitUnpack(sig[hint_start:], self.k, self.omega)
+
+    self.__matrix = self.generateMatrix(matrix_seed)
+    pk_hash = h(public_key).digest(64)
+    mi = h(pk_hash + message).digest(64)
+    chall = sampleInBall(commit_hash, self.tau)
+
+    MVector.simpleNTT(chall)
+    scaled_t: MVector = (t1 * (2**self.d)).NTT()
+    w_approx = (self.__matrix @ z.NTT()).invNTT() - (scaled_t * chall).invNTT()
+    w1 = w_approx.arr.copy()
+
+    for i in range(self.k):
+      for j in range(256):
+        w1[i, j] = useHint(hint[i, j], w1[i, j], self.gamma2)
+    check_commit_hash = h(mi + b''.join([simpleBitPack(p, ((Q-1) // (2 * self.gamma2)) - 1) for p in w1])).digest(self.lambd // 4)
+
+    return z.infinityNorm() < self.gamma1 - self.beta and commit_hash == check_commit_hash
+
+  def Verify(self, public_key: bytes, message: bytes, sig: bytes, context: bytes):
+    """
+    Mathematically verify the signature
+
+    Args:
+      public_key (bytes): The public key to verify with
+      message (bytes): The signed message to verify
+      sig (bytes): The signature
+      context (bytes): Context string of max length 255 bytes
+
+    Returns:
+      True if the signature matches
+
+    Raises:
+      ValueError: Context is longer than 255 bytes
+    """
+    if len(context) > 255: raise ValueError('Context is too long')
+    updated_message = b'\x00' + len(context).to_bytes() + context + message
+    return self.__innerVerify(public_key, updated_message, sig)
+
+  def HashVerify(self, public_key: bytes, message: bytes, sig: bytes, context: bytes, hash_alg: Literal['sha256'] | Literal['sha512'] | Literal['shake128']):
+    """
+    Mathematically verify the signature
+
+    Args:
+      public_key (bytes): The public key to verify with
+      message (bytes): The signed message to verify
+      sig (bytes): The signature
+      context (bytes): Context string of max length 255 bytes
+      hash (sha256 | sha512 | shake128): Which hash algorithm to use
+
+    Returns:
+      True if the signature matches
+
+    Raises:
+      ValueError: Context is longer than 255 bytes or Invalid hash alg was provided
+    """
+    if len(context) > 255: raise ValueError('Context is too long')
+    match hash_alg:
+      case 'sha256':
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01'
+        message_hash = sha256(message).digest()
+      case 'sha512':
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03'
+        message_hash = sha512(message).digest()
+      case 'shake128':
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0b'
+        message_hash = shake_128(message).digest(32)
+      case _:
+        raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
+    updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
+    return self.__innerVerify(public_key, updated_message, sig)
+
+
+### DO LENGTH CHECKS FOR BYTE ENCODED STUFF IN BOTH ML
+### Maybe handle MVec MVec mult in matmul function
