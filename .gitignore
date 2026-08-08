@@ -3,3 +3,5 @@ __pycache__
 src/test.py
 
 dist
+
+docs/site

@@ -1,0 +1,14 @@
+site_name: python PQC lib
+repo_url: https://github.com/Xantus10/python-pqc-lib
+edit_uri: edit/master/docs/docs
+nav:
+  - Home: index.md
+  - Basic structure: basic_structure.md
+  - kem:
+    - ML KEM: kem/mlkem.md
+  - examples:
+    - ML KEM: examples/mlkem.md
+theme: readthedocs
+use_directory_urls: false
+markdown_extensions: 
+  - tables
