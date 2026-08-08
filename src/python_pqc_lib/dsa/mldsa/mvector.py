@@ -115,7 +115,7 @@ class MVector:
       MVector.simpleInvNTT(n)
     return MVector(invntt, isntt=False)
 
-  def __mul__(self, other: MVector | np.typing.NDArray[Any]) -> np.typing.NDArray[Any] | MVector:
+  def __mul__(self, other: MVector | np.typing.NDArray[Any] | int) -> np.typing.NDArray[Any] | MVector:
     """
     MVector multiplication
 
@@ -124,13 +124,13 @@ class MVector:
     MVec * Pol = MVec
 
     Args:
-      other (MVector | int[]): The other operand (MVector or 1D NDArray)
+      other (MVector | int[] | int): The other operand (MVector or 1D NDArray or constant)
 
     Returns:
       The result
 
     Raises:
-      TypeError: Other operand is not of type MVector or a polynomial
+      TypeError: Other operand is not of type MVector or a polynomial or a constant
       ValueError: Both operands need to be NTTs to be multiplied
       IndexError: The rank of the module vectors is not the same
     """
@@ -145,9 +145,14 @@ class MVector:
     elif isinstance(other, type(self.arr)):
       if not self.isntt: raise ValueError('Self is not NTT and cannot be multiplied')
       new = self.arr.copy()
-      for i in range(len(new)):
+      for i in range(len(new)): # Its an NDArray, I think the loop might be unnecessary
         new[i] *= other
       return MVector(new, isntt=True)
+    elif isinstance(other, int):
+      new = self.arr.copy()
+      for i in range(len(new)):
+        new[i] *= other
+      return MVector(new, isntt=self.isntt)
     else:
       raise TypeError(f'Multiplication is not supported for MVector and {type(other).__class__.__name__}')
 
