@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>ML DSA - python PQC lib</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "ML DSA";
+        var mkdocs_page_input_path = "dsa\\mldsa.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../index.html" class="icon icon-home"> python PQC lib
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_structure.html">Basic structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">kem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../kem/mlkem.html">ML KEM</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">dsa</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">ML DSA</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#class-mldsa">class MLDSA</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsa__init__parameters-mldsa_parameters">MLDSA.__init__(parameters: MLDSA_Parameters)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsakeygen">MLDSA.KeyGen()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsasignmessage-bytes-context-bytes">MLDSA.Sign(message: bytes, context: bytes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsahashsignmessage-bytes-context-bytes-hash_alg-sha256-sha512-shake128">MLDSA.HashSign(message: bytes, context: bytes, hash_alg: 'sha256' | 'sha512' | 'shake128')</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsaverifypublic_key-bytes-message-bytes-sig-bytes-context-bytes">MLDSA.Verify(public_key: bytes, message: bytes, sig: bytes, context: bytes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-context-bytes-hash_alg-sha256-sha512-shake128">MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, context: bytes, hash_alg: 'sha256' | 'sha512' | 'shake128')</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsapublic_key">MLDSA.public_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsa__secret_key">MLDSA.__secret_key</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mldsa_parameters">MLDSA_Parameters</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsa_44">MLDSA_44</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsa_65">MLDSA_65</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsa_87">MLDSA_87</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/mlkem.html">ML KEM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/mldsa.html">ML DSA</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python PQC lib</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">dsa</li>
+      <li class="breadcrumb-item active">ML DSA</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Xantus10/python-pqc-lib/edit/master/docs/docs/dsa/mldsa.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="ml-dsa">ML DSA</h1>
+<p>Module-Lattice-Based Digital Signature Standard as defined in <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">NIST FIPS 204</a>.</p>
+<h2 id="class-mldsa"><code>class MLDSA</code></h2>
+<p>The class representing the state of the ML DSA algorithm.</p>
+<h3 id="mldsa__init__parameters-mldsa_parameters"><code>MLDSA.__init__(parameters: MLDSA_Parameters)</code></h3>
+<p>The constructor for ML DSA.</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>parameters</code> : <a href="#mldsa_parameters">MLDSA_Parameters</a><ul>
+<li>A special list of parameters, you should <strong>always</strong> pass an imported constant and <strong>never</strong> a raw list</li>
+</ul>
+</li>
+</ul>
+<h3 id="mldsakeygen"><code>MLDSA.KeyGen()</code></h3>
+<p>Generate keys for ML DSA.</p>
+<p>Keys are stored internally. See <a href="#mldsapublic_key">public_key</a></p>
+<h3 id="mldsasignmessage-bytes-context-bytes"><code>MLDSA.Sign(message: bytes, context: bytes)</code></h3>
+<p>Sign a message and a context string.</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>message</code> : bytes<ul>
+<li>The message to sign</li>
+</ul>
+</li>
+<li><code>context</code> : bytes<ul>
+<li>Optional context string of max length 255 bytes</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>The byte representation of the signature</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: Context is longer than 255 bytes</li>
+</ul>
+<h3 id="mldsahashsignmessage-bytes-context-bytes-hash_alg-sha256-sha512-shake128"><code>MLDSA.HashSign(message: bytes, context: bytes, hash_alg: 'sha256' | 'sha512' | 'shake128')</code></h3>
+<p>Sign a digest of the message and context string.</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>message</code> : bytes<ul>
+<li>The message to sign</li>
+</ul>
+</li>
+<li><code>context</code> : bytes<ul>
+<li>Optional context string of max length 255 bytes</li>
+</ul>
+</li>
+<li><code>hash_alg</code> : 'sha256' | 'sha512' | 'shake128'<ul>
+<li>Hash function to use</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>The byte representation of the signature</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: Context is longer than 255 bytes or Invalid hash alg was provided</li>
+</ul>
+<h3 id="mldsaverifypublic_key-bytes-message-bytes-sig-bytes-context-bytes"><code>MLDSA.Verify(public_key: bytes, message: bytes, sig: bytes, context: bytes)</code></h3>
+<p>Verify a signature.</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>public_key</code> : bytes<ul>
+<li>The byte representation of the public key</li>
+</ul>
+</li>
+<li><code>message</code> : bytes<ul>
+<li>The signed message</li>
+</ul>
+</li>
+<li><code>sig</code>: bytes<ul>
+<li>The signature</li>
+</ul>
+</li>
+<li><code>context</code> : bytes<ul>
+<li>Optional context string of max length 255 bytes</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>True if the signature matches</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: Invalid argument was provided</li>
+</ul>
+<h3 id="mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-context-bytes-hash_alg-sha256-sha512-shake128"><code>MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, context: bytes, hash_alg: 'sha256' | 'sha512' | 'shake128')</code></h3>
+<p>Verify a signature.</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>public_key</code> : bytes<ul>
+<li>The byte representation of the public key</li>
+</ul>
+</li>
+<li><code>message</code> : bytes<ul>
+<li>The signed message</li>
+</ul>
+</li>
+<li><code>sig</code>: bytes<ul>
+<li>The signature</li>
+</ul>
+</li>
+<li><code>context</code> : bytes<ul>
+<li>Optional context string of max length 255 bytes</li>
+</ul>
+</li>
+<li><code>hash_alg</code> : 'sha256' | 'sha512' | 'shake128'<ul>
+<li>Hash function to use</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>True if the signature matches</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: Invalid argument was provided</li>
+</ul>
+<h3 id="mldsapublic_key"><code>MLDSA.public_key</code></h3>
+<p>The byte form of the public key used for verifying a signature. (or <code>None</code> if the key hasn't been generated yet)</p>
+<h3 id="mldsa__secret_key"><code>MLDSA.__secret_key</code></h3>
+<p>The byte form of the secret key used for signing. (or <code>None</code> if the key hasn't been generated yet). This value is kept private.</p>
+<h2 id="mldsa_parameters">MLDSA_Parameters</h2>
+<p>This is a type for a list of parameters for ML DSA. Currently there are three parameter sets:</p>
+<h3 id="mldsa_44">MLDSA_44</h3>
+<p>A parameter set for ML DSA. Corresponds to NIST security strength category 2.</p>
+<h3 id="mldsa_65">MLDSA_65</h3>
+<p>A parameter set for ML DSA. Corresponds to NIST security strength category 3.</p>
+<h3 id="mldsa_87">MLDSA_87</h3>
+<p>A parameter set for ML DSA. Corresponds to NIST security strength category 5.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../kem/mlkem.html" class="btn btn-neutral float-left" title="ML KEM"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../examples/mlkem.html" class="btn btn-neutral float-right" title="ML KEM">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Xantus10/python-pqc-lib" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../kem/mlkem.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../examples/mlkem.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
