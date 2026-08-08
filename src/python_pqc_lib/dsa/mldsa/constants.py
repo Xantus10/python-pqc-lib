@@ -71,3 +71,21 @@ MATRIX_POL_BOUND = 298 + 100
 """Safety loop bound for sampleMatrixPol"""
 SAMPLE_BALL_BOUND = 121 + 100
 """Safety loop bound for sampleInBall"""
+
+CHECK_SIZES = {
+  '44': {
+    'sk': 2560,
+    'pk': 1312,
+    'sig': 2420
+  },
+  '65': {
+    'sk': 4032,
+    'pk': 1952,
+    'sig': 3309
+  },
+  '87': {
+    'sk': 4896,
+    'pk': 2592,
+    'sig': 4627
+  }
+}

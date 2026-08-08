@@ -6,7 +6,7 @@ import numpy as np
 from secrets import token_bytes
 from hashlib import sha256, sha512, shake_128
 
-from .constants import MLDSA_Parameters, Q, SIGN_BOUND
+from .constants import MLDSA_Parameters, Q, SIGN_BOUND, CHECK_SIZES
 from .encoding import power2RoundVec, simpleBitPack, bitPack, simpleBitUnpack, bitUnpack, \
                       highBits, lowBits, makeHint, useHint, hintBitPack, hintBitUnpack
 from .mmatrix import MMatrix
@@ -35,6 +35,7 @@ class MLDSA:
     self.eta = parameters[7]
     self.omega = parameters[8]
     self.beta = self.tau * self.eta
+    self._parameter_version = str(self.k) + str(self.l)
     # Raw math objects
     self.__matrix: MMatrix = None
     # Keys
@@ -282,9 +283,10 @@ class MLDSA:
       True if the signature matches
 
     Raises:
-      ValueError: Context is longer than 255 bytes
+      ValueError: Invalid argument value was provided
     """
     if len(context) > 255: raise ValueError('Context is too long')
+    if len(public_key) != CHECK_SIZES[self._parameter_version]['pk']: raise ValueError('Public key has invalid size')
     updated_message = b'\x00' + len(context).to_bytes() + context + message
     return self.__innerVerify(public_key, updated_message, sig)
 
@@ -303,9 +305,10 @@ class MLDSA:
       True if the signature matches
 
     Raises:
-      ValueError: Context is longer than 255 bytes or Invalid hash alg was provided
+      ValueError: Invalid argument value was provided
     """
     if len(context) > 255: raise ValueError('Context is too long')
+    if len(public_key) != CHECK_SIZES[self._parameter_version]['pk']: raise ValueError('Public key has invalid size')
     match hash_alg:
       case 'sha256':
         oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01'
@@ -320,7 +323,3 @@ class MLDSA:
         raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerVerify(public_key, updated_message, sig)
-
-
-### DO LENGTH CHECKS FOR BYTE ENCODED STUFF IN BOTH ML
-### Maybe handle MVec MVec mult in matmul function
