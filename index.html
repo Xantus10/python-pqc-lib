@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>python PQC lib</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> python PQC lib
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#about">About</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#algorithms-implemented">Algorithms implemented</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#ml-kem">ML KEM</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ml-dsa">ML DSA</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#security-notice">Security notice</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="basic_structure.html">Basic structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">kem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="kem/mlkem.html">ML KEM</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/mlkem.html">ML KEM</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">python PQC lib</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Xantus10/python-pqc-lib/edit/master/docs/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="python-pqc-lib">Python PQC lib</h1>
+<h2 id="about">About</h2>
+<p>Welcome to the documentation for <code>python_pqc_lib</code>! This package provides python implementations of PQC (Post-Quantum Cryptography) algorithms mentioned in <a href="https://csrc.nist.gov/projects/post-quantum-cryptography">the NIST PQC project</a>.</p>
+<h2 id="algorithms-implemented">Algorithms implemented</h2>
+<h3 id="ml-kem">ML KEM</h3>
+<p>ML KEM (<a href="https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.203.pdf">NIST FIPS 203</a>) is a <strong>key encapsulation mechanism</strong> which is set to replace currently used ECDH (Elliptic curve Diffie-Hellman) and other key exchange mechanisms.</p>
+<p>The algorithm itself is based on MLWE (Modular Learning With Errors) problem which is believed to be quantum resistant.</p>
+<h2 id="ml-dsa">ML DSA</h2>
+<p>ML DSA (<a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">NIST FIPS 204</a>) is a <strong>digital signature algorithm</strong> based on the same principles as <code>ML KEM</code>.</p>
+<h2 id="security-notice">Security notice</h2>
+<p>While the solution is always tested to be functional and best effort was made to adhere to the NIST standards and specifications, I do not guarantee that the algorithm is secure.</p>
+<p>Also, since this is an implementation written purely in python, while it can be used in smaller projects, production code should make use of something like the <a href="https://github.com/pq-code-package">PQC Code package</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="basic_structure.html" class="btn btn-neutral float-right" title="Basic structure">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Xantus10/python-pqc-lib" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="basic_structure.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-08-08 18:26:33.685788+00:00
+-->

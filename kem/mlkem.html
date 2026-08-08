@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>ML KEM - python PQC lib</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "ML KEM";
+        var mkdocs_page_input_path = "kem\\mlkem.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../index.html" class="icon icon-home"> python PQC lib
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_structure.html">Basic structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">kem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">ML KEM</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#class-ml-kem">class ML KEM</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem__init__parameters-mlkem_parameters">MLKEM.__init__(parameters: MLKEM_Parameters)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkemkeygen">MLKEM.KeyGen()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkemencapsulateek-bytes">MLKEM.Encapsulate(ek: bytes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkemdecapsulateciphertext-bytes">MLKEM.Decapsulate(ciphertext: bytes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkemencaps_key">MLKEM.encaps_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem__decaps_key">MLKEM.__decaps_key</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mlkem_parameters">MLKEM_Parameters</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem_512">MLKEM_512</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem_768">MLKEM_768</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem_1024">MLKEM_1024</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/mlkem.html">ML KEM</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python PQC lib</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">kem</li>
+      <li class="breadcrumb-item active">ML KEM</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Xantus10/python-pqc-lib/edit/master/docs/docs/kem/mlkem.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="ml-kem">ML KEM</h1>
+<p>Module-Lattice-Based Key-Encapsulation Mechanism as defined in <a href="https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.203.pdf">NIST FIPS 203</a>.</p>
+<h2 id="class-ml-kem"><code>class ML KEM</code></h2>
+<p>The class representing the state of the ML KEM algorithm.</p>
+<h3 id="mlkem__init__parameters-mlkem_parameters"><code>MLKEM.__init__(parameters: MLKEM_Parameters)</code></h3>
+<p>The constructor for ML KEM.</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>parameters</code> : <a href="#mlkem_parameters">MLKEM_Parameters</a><ul>
+<li>A special list of parameters, you should <strong>always</strong> pass an imported constant and <strong>never</strong> a raw list</li>
+</ul>
+</li>
+</ul>
+<h3 id="mlkemkeygen"><code>MLKEM.KeyGen()</code></h3>
+<p>Generate keys for ML KEM.</p>
+<p>Keys are stored internally. See <a href="#mlkemencaps_key">encaps_key</a></p>
+<h3 id="mlkemencapsulateek-bytes"><code>MLKEM.Encapsulate(ek: bytes)</code></h3>
+<p>Generate and encapsulate a shared key</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>ek</code> : bytes<ul>
+<li>The encapsulation key to use</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>A tuple of <code>(shared_key, encapsulated_key)</code></p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>TypeError</code>: If the provided encapsulation key is not bytes</li>
+<li><code>ValueError</code>: The encapsulation key is not valid (invalid length or values)</li>
+</ul>
+<h3 id="mlkemdecapsulateciphertext-bytes"><code>MLKEM.Decapsulate(ciphertext: bytes)</code></h3>
+<p>Decrypt the ciphertext into a shared key</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>ciphertext</code> : bytes<ul>
+<li>The encapsulated shared key</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>The shared key</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>TypeError</code>: If the provided ciphertext is not bytes</li>
+<li><code>ValueError</code>: The ciphertext has invalid length</li>
+</ul>
+<h3 id="mlkemencaps_key"><code>MLKEM.encaps_key</code></h3>
+<p>The byte form of the encapsulation key (or <code>None</code> if the key hasn't been generated yet)</p>
+<h3 id="mlkem__decaps_key"><code>MLKEM.__decaps_key</code></h3>
+<p>The byte form of the decapsulation key (or <code>None</code> if the key hasn't been generated yet). This value is kept private.</p>
+<h2 id="mlkem_parameters">MLKEM_Parameters</h2>
+<p>This is a type for a list of parameters for ML KEM. Currently there are three parameter sets:</p>
+<h3 id="mlkem_512">MLKEM_512</h3>
+<p>A parameter set for ML KEM. Corresponds to NIST security strength category 1.</p>
+<h3 id="mlkem_768">MLKEM_768</h3>
+<p>A parameter set for ML KEM. Corresponds to NIST security strength category 3.</p>
+<h3 id="mlkem_1024">MLKEM_1024</h3>
+<p>A parameter set for ML KEM. Corresponds to NIST security strength category 5.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../basic_structure.html" class="btn btn-neutral float-left" title="Basic structure"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../examples/mlkem.html" class="btn btn-neutral float-right" title="ML KEM">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Xantus10/python-pqc-lib" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../basic_structure.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../examples/mlkem.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
