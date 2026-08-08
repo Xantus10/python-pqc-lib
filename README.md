@@ -9,7 +9,7 @@ Currently supports the following algorithms:
 - Key encapsulation
     - `ML KEM` - [NIST FIPS 203](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.203.pdf)
 - Digital signature
-    - blank
+    - `ML DSA` - [NIST FIPS 204](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf)
 
 ## Dependencies
 
@@ -23,8 +23,8 @@ Also, since this is an implementation written purely in python, while it can be 
 
 ## TODO
 
-- Implement ML DSA
+- Basic documentation
 - Remove duplicit ML code
-- Test with (NIST ACVP)[https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files]
+- Test with [NIST ACVP](https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files)
 - Add automated tests
 - Implement SLH DSA
