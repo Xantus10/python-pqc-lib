@@ -23,8 +23,6 @@ Also, since this is an implementation written purely in python, while it can be 
 
 ## TODO
 
-- Basic documentation
-- Remove duplicit ML code
 - Test with [NIST ACVP](https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files)
 - Add automated tests
 - Implement SLH DSA
