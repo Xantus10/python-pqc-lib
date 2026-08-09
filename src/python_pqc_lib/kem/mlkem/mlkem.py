@@ -8,8 +8,8 @@ from secrets import token_bytes
 
 from .constants import MLKEM_Parameters, N, Q
 from .encoding import byte_encode, byte_decode, compress, decompress
-from .mmatrix import MMatrix
-from .mvector import MVector
+from .mmatrix import MMatrix, MMatrix_type
+from .mvector import MVector, MVector_type
 from .random_helper import generateSmallPolynomial, generateMatrixPolynomial, hashG, hashH, hashJ, prf
 
 class MLKEM:
@@ -28,12 +28,12 @@ class MLKEM:
     self.du = parameters[3]
     self.dv = parameters[4]
     # Raw math objects
-    self.__matrix: MMatrix = None
+    self.__matrix: MMatrix_type = None
     # Byte keys
     self.encaps_key = None
     self.__decaps_key = None
 
-  def generateMatrix(self, matrix_seed: bytes) -> MMatrix:
+  def generateMatrix(self, matrix_seed: bytes) -> MMatrix_type:
     """
     Generate the public matrix
 
@@ -47,7 +47,7 @@ class MLKEM:
       [[generateMatrixPolynomial(matrix_seed, j, i) for j in range(self.k)] for i in range(self.k)]
     )
 
-  def generateVector(self, seed: bytes, uniq_n: int, eta: int) -> MVector:
+  def generateVector(self, seed: bytes, uniq_n: int, eta: int) -> MVector_type:
     """
     Generate a small numbers vector
 
@@ -144,7 +144,7 @@ class MLKEM:
     u = (self.__matrix @ secret_vec).invNTT() + error_vec1
     # Compute ciphertext v
     m_encoded = decompress(byte_decode(m, 1), 1)
-    v = public_vec * secret_vec
+    v = public_vec @ secret_vec
     MVector.simpleInvNTT(v)
     v += m_encoded
     v %= Q
@@ -215,7 +215,7 @@ class MLKEM:
     # Decode s
     secret_vec = MVector.from_coefficients([byte_decode(dk[i*384:(i+1)*384], 12) for i in range(self.k)], isntt=True)
     # Compute m
-    mult = secret_vec * u.NTT()
+    mult = secret_vec @ u.NTT()
     mult %= Q
     MVector.simpleInvNTT(mult)
     m_encoded = v - mult

@@ -9,8 +9,8 @@ from hashlib import sha256, sha512, shake_128
 from .constants import MLDSA_Parameters, Q, SIGN_BOUND, CHECK_SIZES
 from .encoding import power2RoundVec, simpleBitPack, bitPack, simpleBitUnpack, bitUnpack, \
                       highBits, lowBits, makeHint, useHint, hintBitPack, hintBitUnpack
-from .mmatrix import MMatrix
-from .mvector import MVector
+from .mmatrix import MMatrix, MMatrix_type
+from .mvector import MVector, MVector_type
 from .random_helper import sampleInBall, sampleMatrixPol, sampleSmallPolynomial, h, expandMask
 
 from typing import Literal
@@ -37,12 +37,12 @@ class MLDSA:
     self.beta = self.tau * self.eta
     self._parameter_version = str(self.k) + str(self.l)
     # Raw math objects
-    self.__matrix: MMatrix = None
+    self.__matrix: MMatrix_type = None
     # Keys
     self.public_key = None
     self.__secret_key = None
 
-  def generateMatrix(self, matrix_seed: bytes) -> MMatrix:
+  def generateMatrix(self, matrix_seed: bytes) -> MMatrix_type:
     """
     Generate the public matrix
 
@@ -56,7 +56,7 @@ class MLDSA:
       [[sampleMatrixPol(matrix_seed, j, i) for j in range(self.l)] for i in range(self.k)]
     )
 
-  def generateSecretVector(self, seed: bytes, uniq_n: int, eta: int, length: int) -> MVector:
+  def generateSecretVector(self, seed: bytes, uniq_n: int, eta: int, length: int) -> MVector_type:
     """
     Generate a small numbers vector
 
@@ -258,7 +258,7 @@ class MLDSA:
     chall = sampleInBall(commit_hash, self.tau)
 
     MVector.simpleNTT(chall)
-    scaled_t: MVector = (t1 * (2**self.d)).NTT()
+    scaled_t: MVector_type = (t1 * (2**self.d)).NTT()
     w_approx = (self.__matrix @ z.NTT()).invNTT() - (scaled_t * chall).invNTT()
     w1 = w_approx.arr.copy()
 

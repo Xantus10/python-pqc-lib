@@ -2,66 +2,35 @@ import numpy as np
 
 from typing import Any
 
-from .constants import N, Q, ZETA
-from .math_helper import multiplyNTTs
+from ...util.mvector import MVector_Factory, MVector_type
 
-class MVector:
-  """A representation of a module vector"""
-  def __init__(self, np_array: np.typing.NDArray[Any], isntt = False):
-    """
-    A representation of a module vector
+from .constants import N, Q, ZETA, ZETA2
 
-    Args:
-      np_array (int[k][N]): NumPy array of the coefficients
-      isntt (bool): Are the coefficients ntt representations
-    """
-    self.arr = np_array
-    self.isntt = isntt
 
-  @staticmethod
-  def from_coefficients(coefficients: list[list[int]], isntt = False) -> 'MVector':
-    """
-    Construct a vector from a list of coefficients
+def simpleNTT(n: np.typing.NDArray[Any]):
+  """
+  Perform NTT on a single polynomial
 
-    Args:
-      coefficients (int[k][N]): The coefficients of the polynomials
-    """
-    arr = np.array(coefficients, dtype=np.int64)
-    return MVector(arr, isntt)
+  This function **modifies** the original array
 
-  def NTT(self) -> 'MVector':
-    """
-    Compute the NTT representation of this vector
+  Args:
+    n (int[]) - The polynomial 1D NDArray
+  """
+  i = 1
+  ln = 128
+  while ln >= 2:
+    start = 0
+    while start < 256:
+      zeta = ZETA[i]
+      i += 1
+      for j in range(start, start + ln):
+        t = (zeta * n[j + ln]) % Q
+        n[j + ln] = (n[j] - t) % Q
+        n[j] = (n[j] + t) % Q
+      start += 2*ln
+    ln //= 2
 
-    Returns:
-      The NTT MVector
-
-    Raises:
-      ValueError: The vector is already NTT representation
-    """
-    if self.isntt: raise ValueError('Vector is already an NTT representation')
-    def _singleNTT(n: np.typing.NDArray[Any]):
-      i = 1
-      ln = 128
-      while ln >= 2:
-        start = 0
-        while start < 256:
-          zeta = ZETA[i]
-          i += 1
-          for j in range(start, start + ln):
-            t = (zeta * n[j + ln]) % Q
-            n[j + ln] = (n[j] - t) % Q
-            n[j] = (n[j] + t) % Q
-          start += 2*ln
-        ln //= 2
-
-    ntt = self.arr.copy()
-    for n in ntt:
-      _singleNTT(n)
-    return MVector(ntt, isntt=True)
-
-  @staticmethod
-  def simpleInvNTT(n: np.typing.NDArray[Any]):
+def simpleInvNTT(n: np.typing.NDArray[Any]):
     """
     Perform an inverse NTT on a single polynomial
 
@@ -87,65 +56,26 @@ class MVector:
       n[i] *= 3303
       n[i] %= Q
 
-  def invNTT(self) -> 'MVector':
-    """
-    Compute the inverse NTT of this vector
+def multiplyNTTs(pol1: np.typing.NDArray[Any], pol2: np.typing.NDArray[Any]) -> np.typing.NDArray[Any]:
+  """
+  Multiply NTT polynomials
 
-    Returns:
-      The coefficient space MVector
+  Args:
+    pol1 (int[N]): First ntt polynomial
+    pol2 (int[N]): Second ntt polynomial
 
-    Raises:
-      ValueError: The vector is not an NTT representation
-    """
-    if not self.isntt: raise ValueError('Vector is not an NTT representation')
+  Returns:
+    The result ntt polynomial coefficients
+  """
+  def _baseCaseMultiply(a0, a1, b0, b1, gamma):
+    return (a0 * b0 + a1 * b1 * gamma) % Q, (a0 * b1 + a1 * b0) % Q
 
-    invntt = self.arr.copy()
-    for n in invntt:
-      MVector.simpleInvNTT(n)
-    return MVector(invntt, isntt=False)
+  new = np.zeros((N,), dtype=np.int64)
 
-  def __mul__(self, other: 'MVector') -> np.typing.NDArray[Any]:
-    """
-    MVector-MVector multiplication
+  for i in range(0, 256, 2):
+    new[i], new[i+1] = _baseCaseMultiply(pol1[i], pol1[i+1], pol2[i], pol2[i+1], ZETA2[i//2])
 
-    Args:
-      other (MVector): The other vector
+  return new
 
-    Returns:
-      The result polynomial
 
-    Raises:
-      TypeError: Other operand is not of type MVector
-      ValueError: Both operands need to be NTTs to be multiplied
-      IndexError: The rank of the module vectors is not the same
-    """
-    if not isinstance(other, type(self)): raise TypeError(f'Multiplication is not supported for MVector and {type(other).__class__.__name__}')
-    if not (self.isntt and other.isntt): raise ValueError('Both operands need to be NTTs to be multiplied')
-    k = len(self.arr)
-    if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
-    new = np.zeros((N,), dtype=np.int64)
-    for i in range(k):
-      new += multiplyNTTs(self.arr[i], other.arr[i])
-    return new
-
-  def __add__(self, other: 'MVector') -> 'MVector':
-    """
-    MVector-MVector addition
-
-    Args:
-      other (MVector): The other vector
-
-    Returns:
-      A new result vector
-
-    Raises:
-      TypeError: Other operand is not of type MVector
-      ValueError: Both operands need to be either NTT or coefficient form
-      IndexError: The rank of the module vectors is not the same
-    """
-    if not isinstance(other, type(self)): raise TypeError(f'Addition is not supported for MVector and {type(other).__class__.__name__}')
-    if not (self.isntt == other.isntt): raise ValueError('Both operands need to be in the same domain (NTT vs coefficient)')
-    k = len(self.arr)
-    if k != len(other.arr): raise IndexError('The rank of the module vectors is not the same')
-    new = (self.arr + other.arr) % Q
-    return MVector(new, isntt=self.isntt)
+MVector = MVector_Factory(Q, simpleNTT, simpleInvNTT, multiplyNTTs)
