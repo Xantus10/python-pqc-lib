@@ -28,3 +28,12 @@ Documentation = "https://xantus10.github.io/python-pqc-lib/index.html"
 [tool.hatch.build.targets.wheel]
 packages = ["src/python_pqc_lib"]
 
+[tool.pytest.ini_options]
+minversion = "9.0"
+addopts = ["-ra", "-q"]
+testpaths = [
+  "tests"
+]
+pythonpath = [
+  "src"
+]

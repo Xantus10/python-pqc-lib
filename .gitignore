@@ -5,3 +5,5 @@ src/test.py
 dist
 
 docs/site
+
+.pytest_cache
