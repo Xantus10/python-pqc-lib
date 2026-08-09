@@ -33,7 +33,11 @@ def bits_to_bytes(data: list[int]) -> bytes:
 
   Returns:
     A byte string of the bits
+
+  Raises:
+    ValueError: The bit list len has to be divisible by 8
   """
+  if len(data) % 8 != 0: raise ValueError('Bits are not rounded to whole 8ths')
   ret = bytearray()
   for i in range(0, len(data), 8):
     cur_byte = 0
@@ -108,8 +112,12 @@ def byte_decode(b: bytes, d: int) -> np.typing.NDArray[Any]:
 
   Returns:
     An NDArray of integers
+
+  Raises:
+    ValueError: The bits are not a whole multiple of d
   """
   bits = bytes_to_bits(b)
+  if len(bits) % d != 0: raise ValueError('The bits are not a whole multiple of the bitlen d')
   ln = len(bits) // d
   m = Q if d == 12 else 2**d
   ret = np.zeros((ln,), dtype=np.int64)
