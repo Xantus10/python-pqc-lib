@@ -100,6 +100,10 @@ class MLDSA:
     sk += b''.join([bitPack(p, -(2**(self.d-1)) + 1, 2**(self.d-1)) for p in t0])
     return pk, sk
 
+  def _deterministicKeyGen(self, random_seed: bytes):
+    """Deterministic version of KeyGen for testing purposes"""
+    return self.__innerKeyGen(random_seed)
+
   def KeyGen(self):
     """
     Generate keys for ML DSA
@@ -107,7 +111,7 @@ class MLDSA:
     Keys are stored internally
     """
     random_seed = token_bytes(32)
-    self.public_key, self.__secret_key = self.__innerKeyGen(random_seed)
+    self.public_key, self.__secret_key = self._deterministicKeyGen(random_seed)
 
 
   def __innerSign(self, secret_key: bytes, message: bytes, random_seed: bytes) -> bytes:
@@ -174,6 +178,12 @@ class MLDSA:
     sig += hintBitPack(hint, self.omega)
     return sig
 
+  def _deterministicSign(self, message: bytes, context: bytes, random_seed: bytes):
+    """Deterministic variant of Sign for testing purposes"""
+    if len(context) > 255: raise ValueError('Context is too long')
+    updated_message = b'\x00' + len(context).to_bytes() + context + message
+    return self.__innerSign(self.__secret_key, updated_message, random_seed)
+
   def Sign(self, message: bytes, context: bytes) -> bytes:
     """
     Sign a message and a context string
@@ -188,9 +198,24 @@ class MLDSA:
     Raises:
       ValueError: Context is longer than 255 bytes
     """
-    if len(context) > 255: raise ValueError('Context is too long')
     random_seed = token_bytes(32)
-    updated_message = b'\x00' + len(context).to_bytes() + context + message
+    return self._deterministicSign(message, context, random_seed)
+
+  def _deterministicHashSign(self, message: bytes, context: bytes, hash_alg, random_seed: bytes):
+    if len(context) > 255: raise ValueError('Context is too long')
+    match hash_alg:
+      case 'sha256':
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01'
+        message_hash = sha256(message).digest()
+      case 'sha512':
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03'
+        message_hash = sha512(message).digest()
+      case 'shake128':
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0b'
+        message_hash = shake_128(message).digest(32)
+      case _:
+        raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
+    updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerSign(self.__secret_key, updated_message, random_seed)
 
   def HashSign(self, message: bytes, context: bytes, hash_alg: Literal['sha256'] | Literal['sha512'] | Literal['shake128']):
@@ -208,22 +233,8 @@ class MLDSA:
     Raises:
       ValueError: Context is longer than 255 bytes or Invalid hash alg was provided
     """
-    if len(context) > 255: raise ValueError('Context is too long')
     random_seed = token_bytes(32)
-    match hash_alg:
-      case 'sha256':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01'
-        message_hash = sha256(message).digest()
-      case 'sha512':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03'
-        message_hash = sha512(message).digest()
-      case 'shake128':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0b'
-        message_hash = shake_128(message).digest(32)
-      case _:
-        raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
-    updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
-    return self.__innerSign(self.__secret_key, updated_message, random_seed)
+    return self._deterministicHashSign(message, context, hash_alg, random_seed)
 
 
   def __innerVerify(self, public_key: bytes, message: bytes, sig: bytes) -> bool:
@@ -323,3 +334,7 @@ class MLDSA:
         raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerVerify(public_key, updated_message, sig)
+
+  def _testSetSecretKey(self, sk: bytes):
+    """Test function for explicitly setting secret key"""
+    self.__secret_key = sk
