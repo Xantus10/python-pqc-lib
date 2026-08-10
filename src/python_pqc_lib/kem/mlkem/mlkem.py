@@ -107,6 +107,12 @@ class MLKEM:
     dk += ek + hashH(ek) + random_z
     return ek, dk
 
+  def _deterministicKeyGen(self, random_d: bytes, random_z: bytes):
+    """
+    Test function for deterministic outcome of KeyGen
+    """
+    return self.__innerKeyGen(random_d, random_z)
+
   def KeyGen(self):
     """
     Generate keys for ML KEM
@@ -115,7 +121,7 @@ class MLKEM:
     """
     random_d = token_bytes(32)
     random_z = token_bytes(32)
-    self.encaps_key, self.__decaps_key = self.__innerKeyGen(random_d, random_z)
+    self.encaps_key, self.__decaps_key = self._deterministicKeyGen(random_d, random_z)
 
   def __PKEEncrypt(self, ek: bytes, m: bytes, random_r: bytes) -> bytes:
     """
@@ -171,6 +177,15 @@ class MLKEM:
     encapsulated_key = self.__PKEEncrypt(ek, random_m, random_r)
     return shared_key, encapsulated_key
 
+  def _deterministicEncapsulate(self, ek: bytes, random_m: bytes):
+    """
+    Test function for deterministic outcome of Encapsulate
+    """
+    if not isinstance(ek, bytes): raise TypeError(f'Expected bytes for encapsulation key, got {type(ek).__class__.__name__}')
+    if len(ek) != 384 * self.k + 32: raise ValueError(f'Provided encapsulation key is of invalid length ({len(ek)} instead of {384 * self.k + 32})')
+    if ek[0:384 * self.k] != byte_encode(byte_decode(ek[0:384 * self.k], 12), 12): raise ValueError(f'Provided encapsulation key holds invalid values')
+    return self.__innerEncaps(ek, random_m)
+
   def Encapsulate(self, ek: bytes) -> tuple[bytes, bytes]:
     """
     Generate and encapsulate a secret key
@@ -185,11 +200,8 @@ class MLKEM:
       TypeError: If the provided encapsulation key is not bytes
       ValueError: The encapsulation key is not valid (invalid length or values)
     """
-    if not isinstance(ek, bytes): raise TypeError(f'Expected bytes for encapsulation key, got {type(ek).__class__.__name__}')
-    if len(ek) != 384 * self.k + 32: raise ValueError(f'Provided encapsulation key is of invalid length ({len(ek)} instead of {384 * self.k + 32})')
-    if ek[0:384 * self.k] != byte_encode(byte_decode(ek[0:384 * self.k], 12), 12): raise ValueError(f'Provided encapsulation key holds invalid values')
     random_m = token_bytes(32)
-    return self.__innerEncaps(ek, random_m)
+    return self._deterministicEncapsulate(ek, random_m)
 
 
   def __PKEDecrypt(self, dk: bytes, ciphertext: bytes) -> bytes:
@@ -269,3 +281,9 @@ class MLKEM:
     if not isinstance(ciphertext, bytes): raise TypeError(f'Expected bytes for ciphertext, got {type(ciphertext).__class__.__name__}')
     if len(ciphertext) != 32 * (self.du * self.k + self.dv): raise ValueError(f'Provided ciphertext is of invalid length ({len(ciphertext)} instead of {32 * (self.du * self.k + self.dv)})')
     return self.__innerDecaps(self.__decaps_key, ciphertext)
+
+  def _testSetDecapsKey(self, dk: bytes):
+    """
+    Testing function for explicitly setting decaps key
+    """
+    self.__decaps_key = dk
