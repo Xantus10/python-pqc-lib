@@ -40,7 +40,7 @@ class MLDSA:
     self.__matrix: MMatrix_type = None
     # Keys
     self.public_key = None
-    self.__secret_key = None
+    self._secret_key = None
 
   def generateMatrix(self, matrix_seed: bytes) -> MMatrix_type:
     """
@@ -111,7 +111,7 @@ class MLDSA:
     Keys are stored internally
     """
     random_seed = token_bytes(32)
-    self.public_key, self.__secret_key = self._deterministicKeyGen(random_seed)
+    self.public_key, self._secret_key = self._deterministicKeyGen(random_seed)
 
 
   def __innerSign(self, secret_key: bytes, message: bytes, random_seed: bytes) -> bytes:
@@ -182,7 +182,7 @@ class MLDSA:
     """Deterministic variant of Sign for testing purposes"""
     if len(context) > 255: raise ValueError('Context is too long')
     updated_message = b'\x00' + len(context).to_bytes() + context + message
-    return self.__innerSign(self.__secret_key, updated_message, random_seed)
+    return self.__innerSign(self._secret_key, updated_message, random_seed)
 
   def Sign(self, message: bytes, context: bytes) -> bytes:
     """
@@ -216,7 +216,7 @@ class MLDSA:
       case _:
         raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
-    return self.__innerSign(self.__secret_key, updated_message, random_seed)
+    return self.__innerSign(self._secret_key, updated_message, random_seed)
 
   def HashSign(self, message: bytes, context: bytes, hash_alg: Literal['sha256'] | Literal['sha512'] | Literal['shake128']):
     """
@@ -337,4 +337,4 @@ class MLDSA:
 
   def _testSetSecretKey(self, sk: bytes):
     """Test function for explicitly setting secret key"""
-    self.__secret_key = sk
+    self._secret_key = sk

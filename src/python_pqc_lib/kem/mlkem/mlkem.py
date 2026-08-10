@@ -31,7 +31,7 @@ class MLKEM:
     self.__matrix: MMatrix_type = None
     # Byte keys
     self.encaps_key = None
-    self.__decaps_key = None
+    self._decaps_key = None
 
   def generateMatrix(self, matrix_seed: bytes) -> MMatrix_type:
     """
@@ -121,7 +121,7 @@ class MLKEM:
     """
     random_d = token_bytes(32)
     random_z = token_bytes(32)
-    self.encaps_key, self.__decaps_key = self._deterministicKeyGen(random_d, random_z)
+    self.encaps_key, self._decaps_key = self._deterministicKeyGen(random_d, random_z)
 
   def __PKEEncrypt(self, ek: bytes, m: bytes, random_r: bytes) -> bytes:
     """
@@ -280,10 +280,10 @@ class MLKEM:
     """
     if not isinstance(ciphertext, bytes): raise TypeError(f'Expected bytes for ciphertext, got {type(ciphertext).__class__.__name__}')
     if len(ciphertext) != 32 * (self.du * self.k + self.dv): raise ValueError(f'Provided ciphertext is of invalid length ({len(ciphertext)} instead of {32 * (self.du * self.k + self.dv)})')
-    return self.__innerDecaps(self.__decaps_key, ciphertext)
+    return self.__innerDecaps(self._decaps_key, ciphertext)
 
   def _testSetDecapsKey(self, dk: bytes):
     """
     Testing function for explicitly setting decaps key
     """
-    self.__decaps_key = dk
+    self._decaps_key = dk
