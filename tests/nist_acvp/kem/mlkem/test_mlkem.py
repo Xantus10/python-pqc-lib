@@ -96,33 +96,47 @@ def load_decaps_json(fn: str):
   with open(fn, 'r') as f:
     content = json.load(f)
   return [
-    (bytes.fromhex(v['dk']), bytes.fromhex(v['c']), bytes.fromhex(v['k'])) for v in content
+    (bytes.fromhex(v['z']), bytes.fromhex(v['d']), bytes.fromhex(v['c']), bytes.fromhex(v['k'])) for v in content['seed']
+  ] + [
+    (None, bytes.fromhex(v['dk']), bytes.fromhex(v['c']), bytes.fromhex(v['k'])) for v in content['key']
   ]
 
 # NIST ACVP
 data_512_de = load_decaps_json(cur_dir / 'nist_test_decaps_512.json')
 
-@pytest.mark.parametrize(['dk', 'c', 'k'], data_512_de)
-def test_mlkem_512_decaps(mlkem_512_inst, dk, c, k):
-  mlkem_512_inst._testSetDecapsKey(dk)
+@pytest.mark.parametrize(['z', 'd', 'c', 'k'], data_512_de)
+def test_mlkem_512_decaps(mlkem_512_inst, z, d, c, k):
+  if z is None:
+    mlkem_512_inst._testSetDecapsKey(d)
+  else:
+    _, dk = mlkem_512_inst._deterministicKeyGen(d, z)
+    mlkem_512_inst._testSetDecapsKey(dk)
   k_gen = mlkem_512_inst.Decapsulate(c)
   assert k_gen == k
 
 # NIST ACVP
 data_768_de = load_decaps_json(cur_dir / 'nist_test_decaps_768.json')
 
-@pytest.mark.parametrize(['dk', 'c', 'k'], data_768_de)
-def test_mlkem_768_decaps(mlkem_768_inst, dk, c, k):
-  mlkem_768_inst._testSetDecapsKey(dk)
+@pytest.mark.parametrize(['z', 'd', 'c', 'k'], data_768_de)
+def test_mlkem_768_decaps(mlkem_768_inst, z, d, c, k):
+  if z is None:
+    mlkem_768_inst._testSetDecapsKey(d)
+  else:
+    _, dk = mlkem_768_inst._deterministicKeyGen(d, z)
+    mlkem_768_inst._testSetDecapsKey(dk)
   k_gen = mlkem_768_inst.Decapsulate(c)
   assert k_gen == k
 
 # NIST ACVP
 data_1024_de = load_decaps_json(cur_dir / 'nist_test_decaps_1024.json')
 
-@pytest.mark.parametrize(['dk', 'c', 'k'], data_1024_de)
-def test_mlkem_1024_decaps(mlkem_1024_inst, dk, c, k):
-  mlkem_1024_inst._testSetDecapsKey(dk)
+@pytest.mark.parametrize(['z', 'd', 'c', 'k'], data_1024_de)
+def test_mlkem_1024_decaps(mlkem_1024_inst, z, d, c, k):
+  if z is None:
+    mlkem_1024_inst._testSetDecapsKey(d)
+  else:
+    _, dk = mlkem_1024_inst._deterministicKeyGen(d, z)
+    mlkem_1024_inst._testSetDecapsKey(dk)
   k_gen = mlkem_1024_inst.Decapsulate(c)
   assert k_gen == k
 
