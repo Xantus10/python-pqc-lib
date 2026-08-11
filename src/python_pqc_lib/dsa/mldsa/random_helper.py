@@ -81,7 +81,7 @@ def sampleSmallPolynomial(seed: bytes, uniq2B: int, eta: int) -> np.typing.NDArr
     RuntimeError: Safety bound was exceeded
   """
   ret = np.zeros((256,), dtype=np.int64)
-  xof = XOF(g(seed + uniq2B.to_bytes(2, byteorder='little')))
+  xof = XOF(h(seed + uniq2B.to_bytes(2, byteorder='little')))
   i = 0
   safety_index = 0
   while i < 256:
