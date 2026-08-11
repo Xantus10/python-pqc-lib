@@ -4,6 +4,8 @@ from pathlib import Path
 
 from python_pqc_lib.kem import *
 
+pytestmark = [pytest.mark.nist, pytest.mark.kem, pytest.mark.mlkem]
+
 cur_dir = Path(__file__).parent
 
 def load_keygen_json(fn: str):

@@ -1,5 +1,7 @@
 import pytest
 
+pytestmark = [pytest.mark.unit, pytest.mark.kem, pytest.mark.mlkem]
+
 from python_pqc_lib.kem.mlkem.encoding import *
 
 ### Standard Unit tests

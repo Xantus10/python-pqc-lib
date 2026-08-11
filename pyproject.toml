@@ -37,3 +37,11 @@ testpaths = [
 pythonpath = [
   "src"
 ]
+markers = [
+  "unit: This test is a Unit test",
+  "nist: This test is a NIST ACVP compliance test",
+  "kem: Tests which are part of KEM",
+  "mlkem: Tests for ML KEM scheme",
+  "dsa: Tests which are part of DSA",
+  "mldsa: Tests for ML DSA scheme"
+]
