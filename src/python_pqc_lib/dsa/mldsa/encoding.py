@@ -234,7 +234,7 @@ def centered_mod(x: int, q: int):
     The remainder centered around 0
   """
   res = x % q
-  if res > (q-1) // 2:
+  if res > q // 2:
     res -= q
   return res
 
