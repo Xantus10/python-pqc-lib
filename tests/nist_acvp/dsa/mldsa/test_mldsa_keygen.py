@@ -27,3 +27,32 @@ def test_mldsa_44_keygen(mldsa_44_inst, seed, pk, sk):
   kg_pk, kg_sk = mldsa_44_inst._deterministicKeyGen(seed)
   assert kg_pk == pk
   assert kg_sk == sk
+
+
+# NIST ACVP
+data_65_kg = load_keygen_json(cur_dir / 'nist_test_keygen_65.json')
+
+@pytest.fixture
+def mldsa_65_inst():
+  return MLDSA(MLDSA_65)
+
+@pytest.mark.parametrize(['seed', 'pk', 'sk'], data_65_kg)
+def test_mldsa_65_keygen(mldsa_65_inst, seed, pk, sk):
+  kg_pk, kg_sk = mldsa_65_inst._deterministicKeyGen(seed)
+  assert kg_pk == pk
+  assert kg_sk == sk
+
+
+# NIST ACVP
+data_87_kg = load_keygen_json(cur_dir / 'nist_test_keygen_87.json')
+
+@pytest.fixture
+def mldsa_87_inst():
+  return MLDSA(MLDSA_87)
+
+@pytest.mark.parametrize(['seed', 'pk', 'sk'], data_87_kg)
+def test_mldsa_87_keygen(mldsa_87_inst, seed, pk, sk):
+  kg_pk, kg_sk = mldsa_87_inst._deterministicKeyGen(seed)
+  assert kg_pk == pk
+  assert kg_sk == sk
+
