@@ -17,6 +17,21 @@ from typing import Literal
 
 class MLDSA:
   """Class representing an ML DSA state"""
+  SUPPORTED_HASH_ALGS = ('sha256', 'sha512', 'shake128')
+  """Supported hash algorithms for HashSign"""
+  @staticmethod
+  def getLowercaseHashAlgName(alg: str):
+    """
+    Convert a hash algorithm name (like SHA3-512) into its simple form (like sha3512)
+
+    Args:
+      alg (str): The algorithm name
+
+    Returns:
+      The lowecase name
+    """
+    return alg.replace('-', '').replace('_', '').lower()
+
   def __init__(self, parameters: MLDSA_Parameters):
     """
     Class representing an ML DSA state
