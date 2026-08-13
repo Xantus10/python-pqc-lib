@@ -112,9 +112,7 @@ def expandMask(seed: bytes, gamma1: int, l: int, uniq: int) -> np.typing.NDArray
     2D NDArray of the coefficients
   """
   ret = np.zeros((l,256), dtype=np.int64)
-  xof = XOF(g(seed))
   bit_len = 1 + ((gamma1-1).bit_length())
-  rank = 0
   for rank in range(l):
     vals = h(seed + (uniq + rank).to_bytes(2, byteorder='little')).digest(32 * bit_len)
     ret[rank] = bitUnpack(vals, -gamma1 + 1, gamma1)
