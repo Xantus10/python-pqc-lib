@@ -107,3 +107,31 @@ def test_mldsa_87_sign(mldsa_87_inst, isKeyGen, secret, msg, ctx, sig):
   gen_sig = mldsa_87_inst._deterministicSign(msg, ctx, b'\x00'*32)
   assert gen_sig == sig
 
+
+def load_verify_json(fn: str):
+  with open(fn, 'r') as f:
+    content = json.load(f)
+  return [
+    (bytes.fromhex(v['pk']), bytes.fromhex(v['message']), bytes.fromhex(v['context']), bytes.fromhex(v['signature']), v['testPassed']) for v in content
+  ]
+
+data_44_vrfy = load_verify_json(cur_dir / 'nist_test_verify_44.json')
+
+@pytest.mark.parametrize(['pk', 'msg', 'ctx', 'sig', 'passed'], data_44_vrfy, ids=long_id_func)
+def test_mldsa_44_verify(mldsa_44_inst, pk, msg, ctx, sig, passed):
+  res = mldsa_44_inst.Verify(pk, msg, sig, ctx)
+  assert res == passed
+
+data_65_vrfy = load_verify_json(cur_dir / 'nist_test_verify_65.json')
+
+@pytest.mark.parametrize(['pk', 'msg', 'ctx', 'sig', 'passed'], data_65_vrfy, ids=long_id_func)
+def test_mldsa_65_verify(mldsa_65_inst, pk, msg, ctx, sig, passed):
+  res = mldsa_65_inst.Verify(pk, msg, sig, ctx)
+  assert res == passed
+
+data_87_vrfy = load_verify_json(cur_dir / 'nist_test_verify_87.json')
+
+@pytest.mark.parametrize(['pk', 'msg', 'ctx', 'sig', 'passed'], data_87_vrfy, ids=long_id_func)
+def test_mldsa_87_verify(mldsa_87_inst, pk, msg, ctx, sig, passed):
+  res = mldsa_87_inst.Verify(pk, msg, sig, ctx)
+  assert res == passed
