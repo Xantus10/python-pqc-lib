@@ -276,7 +276,10 @@ class MLDSA:
     z = MVector.from_coefficients(
       [bitUnpack(sig[i:i+z_step_size], -self.gamma1 + 1, self.gamma1) for i in range(self.lambd//4, hint_start, z_step_size)]
     )
-    hint = hintBitUnpack(sig[hint_start:], self.k, self.omega)
+    try:
+      hint = hintBitUnpack(sig[hint_start:], self.k, self.omega)
+    except IndexError:
+      return False
 
     self.__matrix = self.generateMatrix(matrix_seed)
     pk_hash = h(public_key).digest(64)
