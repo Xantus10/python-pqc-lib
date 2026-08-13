@@ -375,5 +375,5 @@ def MVector_Factory(
         The result MVector with coefficients centered mod Q
       """
       mod = self.arr % self.Q
-      return MVector(np.where(mod > ((self.Q-1) // 2), mod - self.Q, mod), isntt=self.isntt)
+      return MVector(np.where(mod > (self.Q // 2), mod - self.Q, mod), isntt=self.isntt)
   return MVector
