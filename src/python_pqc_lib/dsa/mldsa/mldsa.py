@@ -186,7 +186,7 @@ class MLDSA:
         base = w - c_s2 + c_t0
         hint = np.array([[makeHint(-c_t0.arr[i, j], base.arr[i, j], self.gamma2) for j in range(256)] for i in range(len(c_t0.arr))], dtype=np.int8)
         if c_t0.infinityNorm() >= self.gamma2 or np.sum(hint) > self.omega: z, hint = None, None
-      counter += 1
+      counter += self.l
       if counter > SIGN_BOUND: RuntimeError('ML-DSA: Sign entered infinite while loop')
     sig = commit_hash
     sig += b''.join([bitPack(p, -self.gamma1 + 1, self.gamma1) for p in z.centered_modQ().arr])
