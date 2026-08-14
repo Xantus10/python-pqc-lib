@@ -69,7 +69,7 @@ class MLDSA:
         oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0b'
         message_hash = shake_128(message).digest(32)
       case 'SHAKE-256':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0b'
+        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0c'
         message_hash = shake_256(message).digest(64)
       case _:
         raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
