@@ -73,3 +73,34 @@ def test_mldsa_87_hashsign(mldsa_87_inst, isKeyGen, secret, msg, ctx, sig, hashA
   gen_sig = mldsa_87_inst._deterministicHashSign(msg, ctx, hashAlg, b'\x00'*32)
   assert gen_sig == sig
 
+
+def load_verify_json(fn: str):
+  with open(fn, 'r') as f:
+    content = json.load(f)
+  return [
+    (bytes.fromhex(v['pk']), bytes.fromhex(v['message']), bytes.fromhex(v['context']), bytes.fromhex(v['signature']), v['testPassed'], v['hashAlg']) for v in content
+  ]
+
+data_44_vrfy = load_verify_json(cur_dir / 'nist_test_hash_verify_44.json')
+
+@pytest.mark.parametrize(['pk', 'msg', 'ctx', 'sig', 'passed', 'hashAlg'], data_44_vrfy, ids=long_id_func)
+def test_mldsa_44_hashverify(mldsa_44_inst, pk, msg, ctx, sig, passed, hashAlg):
+  if not hashAlg in mldsa_44_inst.SUPPORTED_HASH_ALGS: pytest.skip(f'Unsupported hash {hashAlg}')
+  res = mldsa_44_inst.HashVerify(pk, msg, sig, hashAlg, ctx)
+  assert res == passed
+
+data_65_vrfy = load_verify_json(cur_dir / 'nist_test_hash_verify_65.json')
+
+@pytest.mark.parametrize(['pk', 'msg', 'ctx', 'sig', 'passed', 'hashAlg'], data_65_vrfy, ids=long_id_func)
+def test_mldsa_65_hashverify(mldsa_65_inst, pk, msg, ctx, sig, passed, hashAlg):
+  if not hashAlg in mldsa_65_inst.SUPPORTED_HASH_ALGS: pytest.skip(f'Unsupported hash {hashAlg}')
+  res = mldsa_65_inst.HashVerify(pk, msg, sig, hashAlg, ctx)
+  assert res == passed
+
+data_87_vrfy = load_verify_json(cur_dir / 'nist_test_hash_verify_87.json')
+
+@pytest.mark.parametrize(['pk', 'msg', 'ctx', 'sig', 'passed', 'hashAlg'], data_87_vrfy, ids=long_id_func)
+def test_mldsa_87_hashverify(mldsa_87_inst, pk, msg, ctx, sig, passed, hashAlg):
+  if not hashAlg in mldsa_87_inst.SUPPORTED_HASH_ALGS: pytest.skip(f'Unsupported hash {hashAlg}')
+  res = mldsa_87_inst.HashVerify(pk, msg, sig, hashAlg, ctx)
+  assert res == passed
