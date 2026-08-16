@@ -26,7 +26,7 @@ class MLDSA:
                                 'SHA3-224', 'SHA3-256', 'SHA3-384', 'SHA3-512',
                                 'SHAKE-128', 'SHAKE-256']
 
-  def handle_hash(self, message: bytes, hash_alg: MLDSA_Hash_Alg) -> tuple[bytes, bytes]:
+  def _handle_hash(self, message: bytes, hash_alg: MLDSA_Hash_Alg) -> tuple[bytes, bytes]:
     """
     Handle the hashing of message for Hash MLDSA
 
@@ -261,7 +261,7 @@ class MLDSA:
 
   def _deterministicHashSign(self, message: bytes, context: bytes, hash_alg: MLDSA_Hash_Alg, random_seed: bytes):
     if len(context) > 255: raise ValueError('Context is too long')
-    oid, message_hash = self.handle_hash(message, hash_alg)
+    oid, message_hash = self._handle_hash(message, hash_alg)
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerSign(self._secret_key, updated_message, random_seed)
 
@@ -372,7 +372,7 @@ class MLDSA:
     """
     if len(context) > 255: raise ValueError('Context is too long')
     if len(public_key) != CHECK_SIZES[self._parameter_version]['pk']: raise ValueError('Public key has invalid size')
-    oid, message_hash = self.handle_hash(message, hash_alg)
+    oid, message_hash = self._handle_hash(message, hash_alg)
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerVerify(public_key, updated_message, sig)
 
