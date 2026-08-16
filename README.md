@@ -1,6 +1,6 @@
 # Python PQC library
 
-This is a package containing my python implementations of Post Quantum Cryptography algorithms. In all cases I try to adhere to NIST standards or other official materials.
+This is a package containing my python implementations of Post Quantum Cryptography algorithms. The algorithms are tested for NIST compatibility using [NIST ACVP](https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files).
 
 ## Algorithms
 
@@ -23,6 +23,5 @@ Also, since this is an implementation written purely in python, while it can be 
 
 ## TODO
 
-- Test with [NIST ACVP](https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files)
-- Add automated tests
+- Create Unit tests
 - Implement SLH DSA
