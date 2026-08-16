@@ -61,9 +61,9 @@ The shared key
 
 The byte form of the encapsulation key (or `None` if the key hasn't been generated yet)
 
-### `MLKEM.__decaps_key`
+### `MLKEM._decaps_key`
 
-The byte form of the decapsulation key (or `None` if the key hasn't been generated yet). This value is kept private.
+The byte form of the decapsulation key (or `None` if the key hasn't been generated yet). This value should be kept private.
 
 ## MLKEM_Parameters
 
