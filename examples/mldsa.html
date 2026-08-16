@@ -138,7 +138,7 @@ signer.KeyGen()
 message = b'Hello, World!'
 context = b'ML DSA example'
 
-signature = signer.HashSign(message, context, 'sha512')
+signature = signer.HashSign(message, 'SHA3-512', context)
 
 ###
 
@@ -150,7 +150,7 @@ signature = signer.HashSign(message, context, 'sha512')
 
 verification = MLDSA(MLDSA_65)
 
-result = verification.HashVerify(signer.public_key, message, signature, context, 'sha512')
+result = verification.HashVerify(signer.public_key, message, signature, 'SHA3-512', context)
 
 assert result
 
