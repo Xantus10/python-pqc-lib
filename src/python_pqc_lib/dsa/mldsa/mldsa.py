@@ -350,6 +350,7 @@ class MLDSA:
     """
     if len(context) > 255: raise ValueError('Context is too long')
     if len(public_key) != CHECK_SIZES[self._parameter_version]['pk']: raise ValueError('Public key has invalid size')
+    if len(sig) != CHECK_SIZES[self._parameter_version]['sig']: raise ValueError('Signature has invalid size')
     updated_message = b'\x00' + len(context).to_bytes() + context + message
     return self.__innerVerify(public_key, updated_message, sig)
 
@@ -372,6 +373,7 @@ class MLDSA:
     """
     if len(context) > 255: raise ValueError('Context is too long')
     if len(public_key) != CHECK_SIZES[self._parameter_version]['pk']: raise ValueError('Public key has invalid size')
+    if len(sig) != CHECK_SIZES[self._parameter_version]['sig']: raise ValueError('Signature has invalid size')
     oid, message_hash = self._handle_hash(message, hash_alg)
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerVerify(public_key, updated_message, sig)
