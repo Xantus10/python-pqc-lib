@@ -10,7 +10,11 @@ ALGORITHM_OID = {
 }
 
 TAG_SEQUENCE = b'\x30'
+TAG_INTEGER = b'\x02'
 TAG_BIT_STRING = b'\x03'
+TAG_OCTET_STRING = b'\x04'
+TAG_IMPLICIT_CONTEXT_SEED = b'\x80'
+TAG_IMPLICIT_CONTEXT_EXPANDED = b'\x81'
 
 type Scheme = Literal['mlkem', 'mldsa']
 
@@ -85,6 +89,50 @@ def _subject_public_key_info(alg: Scheme, version: str, pk: bytes):
   pk_block = _subject_public_key(pk)
   return TAG_SEQUENCE + _construct_length(len(alg_id_block) + len(pk_block)) + alg_id_block + pk_block
 
+def _version_block(version: int):
+  """
+  Construct the version number
+
+  Args:
+    version (int): The version number
+
+  Returns:
+    The bytes of Version
+  """
+  return TAG_INTEGER + b'\x01' + version.to_bytes()
+
+def _private_key_octet_seed(seed: bytes):
+  """
+  Construct the private key octet
+  
+  Args:
+    seed (bytes): The private seed
+
+  Returns:
+    The bytes of PrivateKey
+  """
+  inner_part = TAG_IMPLICIT_CONTEXT_SEED + _construct_length(len(seed)) + seed
+  return TAG_OCTET_STRING + _construct_length(len(inner_part)) + inner_part
+
+def _private_key_info(alg: Scheme, version: str, seed: bytes):
+  """
+  Construct the PrivateKeyInfo block
+
+  Args:
+    alg (Scheme): The name of the algorithm
+    version (str): The version of the algorithm
+    seed (bytes): The secret seed
+
+  Returns:
+    The bytes of the PrivateKeyInfo
+  """
+  version_block = _version_block(0)
+  alg_id_block = _algorithm_identifier(alg, version)
+  priv_key = _private_key_octet_seed(seed)
+  return TAG_SEQUENCE + _construct_length(len(version_block) + len(alg_id_block) + len(priv_key)) \
+         + version_block + alg_id_block + priv_key
+
+
 def _make_pem(subject: Literal['PUBLIC KEY', 'PRIVATE KEY'], content: bytes):
   encoded_cont = b64encode(content).decode("utf-8")
   cont_arr = [encoded_cont[i:i+64] for i in range(0, len(encoded_cont), 64)]
@@ -104,4 +152,16 @@ def export_public_key(alg: Scheme, version: str, pk: bytes):
   """
   return _make_pem('PUBLIC KEY', _subject_public_key_info(alg, version, pk))
 
-print(export_public_key('mldsa', '44', b'ab'*1312))
+def export_private_key_seed(alg: Scheme, version: str, seed: bytes):
+  """
+  Export the private key into PEM PKCS#8 DER format
+
+  Args:
+    alg (Scheme): The name of the algorithm
+    version (str): The version of the algorithm
+    seed (bytes): The secret seed
+
+  Returns:
+    The PEM PKCS#8 DER private key
+  """
+  return _make_pem('PRIVATE KEY', _private_key_info(alg, version, seed))
