@@ -109,6 +109,24 @@ True if the signature matches
 
 - `ValueError`: Invalid argument was provided
 
+### `MLDSA.ExportPublicKeyPEM()`
+
+Export the public key in PEM PKCS#8 DER format
+
+`Returns`
+
+The PEM string (or None if the key hasn't been generated)
+
+### `MLDSA.ExportSecretKeyPEM()`
+
+Export the secret key (in seed form) in PEM PKCS#8 DER format
+
+**!!! The secret key should stay private !!!**
+
+`Returns`
+
+The PEM string (or None if the key hasn't been generated)
+
 ### `MLDSA.public_key`
 
 The byte form of the public key used for verifying a signature. (or `None` if the key hasn't been generated yet)
@@ -116,6 +134,10 @@ The byte form of the public key used for verifying a signature. (or `None` if th
 ### `MLDSA._secret_key`
 
 The byte form of the secret key used for signing. (or `None` if the key hasn't been generated yet). This value should be kept private.
+
+### `MLDSA._seed`
+
+The random seed used for key generation (This value should be handled with the same level of secrecy as [secret key](#mldsa_secret_key))
 
 ### `MLDSA.SUPPORTED_HASH_ALGS`
 

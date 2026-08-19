@@ -1,4 +1,4 @@
-from base64 import b64encode, b64decode
+from base64 import b64encode
 
 from typing import Literal
 
@@ -6,7 +6,10 @@ from typing import Literal
 ALGORITHM_OID = {
   'mldsa-44': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x11',
   'mldsa-65': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x12',
-  'mldsa-87': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x13'
+  'mldsa-87': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x13',
+  'mlkem-512': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x01',
+  'mlkem-768': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x02',
+  'mlkem-1024': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x03'
 }
 
 TAG_SEQUENCE = b'\x30'
@@ -159,7 +162,7 @@ def export_private_key_seed(alg: Scheme, version: str, seed: bytes):
   Args:
     alg (Scheme): The name of the algorithm
     version (str): The version of the algorithm
-    seed (bytes): The secret seed
+    seed (bytes): The secret seed (or multiple seeds concat)
 
   Returns:
     The PEM PKCS#8 DER private key

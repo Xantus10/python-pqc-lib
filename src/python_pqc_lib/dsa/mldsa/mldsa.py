@@ -13,6 +13,8 @@ from .mmatrix import MMatrix, MMatrix_type
 from .mvector import MVector, MVector_type
 from .random_helper import sampleInBall, sampleMatrixPol, sampleSmallPolynomial, h, expandMask
 
+from ...util.pem import export_public_key, export_private_key_seed
+
 from typing import Literal
 
 class MLDSA:
@@ -99,6 +101,8 @@ class MLDSA:
     # Keys
     self.public_key = None
     self._secret_key = None
+    # Secret seed
+    self._seed = None
 
   def generateMatrix(self, matrix_seed: bytes) -> MMatrix_type:
     """
@@ -169,6 +173,7 @@ class MLDSA:
     Keys are stored internally
     """
     random_seed = token_bytes(32)
+    self._seed = random_seed
     self.public_key, self._secret_key = self._deterministicKeyGen(random_seed)
 
 
@@ -381,3 +386,25 @@ class MLDSA:
   def _testSetSecretKey(self, sk: bytes):
     """Test function for explicitly setting secret key"""
     self._secret_key = sk
+
+  def ExportPublicKeyPEM(self) -> str | None:
+    """
+    Export the public key in PEM PKCS#8 DER format
+
+    Returns:
+      The PEM string (or None if the key hasn't been generated)
+    """
+    if self.public_key is None: return None
+    return export_public_key('mldsa', self._parameter_version, self.public_key)
+
+  def ExportSecretKeyPEM(self) -> str | None:
+    """
+    Export the secret key (in seed form) in PEM PKCS#8 DER format
+
+    **!!! The secret key should stay private !!!**
+
+    Returns:
+      The PEM string (or None if the key hasn't been generated)
+    """
+    if self._seed is None: return None
+    return export_private_key_seed('mldsa', self._parameter_version, self._seed)

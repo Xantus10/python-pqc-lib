@@ -57,6 +57,24 @@ The shared key
 - `TypeError`: If the provided ciphertext is not bytes
 - `ValueError`: The ciphertext has invalid length
 
+### `MLKEM.ExportEncapsKeyPEM()`
+
+Export the encaps key in PEM PKCS#8 DER format
+
+`Returns`
+
+The PEM string (or None if the key hasn't been generated)
+
+### `MLKEM.ExportDecapsKeyPEM()`
+
+Export the decaps key (in seed form) in PEM PKCS#8 DER format
+
+**!!! The decaps key should stay private !!!**
+
+`Returns`
+
+The PEM string (or None if the key hasn't been generated)
+
 ### `MLKEM.encaps_key`
 
 The byte form of the encapsulation key (or `None` if the key hasn't been generated yet)
@@ -64,6 +82,14 @@ The byte form of the encapsulation key (or `None` if the key hasn't been generat
 ### `MLKEM._decaps_key`
 
 The byte form of the decapsulation key (or `None` if the key hasn't been generated yet). This value should be kept private.
+
+### `MLKEM._d`
+
+The secret value d used for key generation (This value should be handled with the same level of secrecy as [decaps key](#mlkem_decaps_key))
+
+### `MLKEM._z`
+
+The secret value z used for implicit rejection (This value should be handled with the same level of secrecy as [decaps key](#mlkem_decaps_key))
 
 ## MLKEM_Parameters
 

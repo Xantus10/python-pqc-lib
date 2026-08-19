@@ -12,6 +12,8 @@ from .mmatrix import MMatrix, MMatrix_type
 from .mvector import MVector, MVector_type
 from .random_helper import generateSmallPolynomial, generateMatrixPolynomial, hashG, hashH, hashJ, prf
 
+from ...util.pem import export_public_key, export_private_key_seed
+
 class MLKEM:
   """Class representing an ML KEM state"""
   def __init__(self, parameters: MLKEM_Parameters):
@@ -27,11 +29,15 @@ class MLKEM:
     self.eta2 = parameters[2]
     self.du = parameters[3]
     self.dv = parameters[4]
+    self._parameter_version = str(self.k * 256)
     # Raw math objects
     self.__matrix: MMatrix_type = None
     # Byte keys
     self.encaps_key = None
     self._decaps_key = None
+    # Decaps key material
+    self._d = None
+    self._z = None
 
   def generateMatrix(self, matrix_seed: bytes) -> MMatrix_type:
     """
@@ -121,6 +127,7 @@ class MLKEM:
     """
     random_d = token_bytes(32)
     random_z = token_bytes(32)
+    self._d, self._z = random_d, random_z
     self.encaps_key, self._decaps_key = self._deterministicKeyGen(random_d, random_z)
 
   def __PKEEncrypt(self, ek: bytes, m: bytes, random_r: bytes) -> bytes:
@@ -287,3 +294,25 @@ class MLKEM:
     Testing function for explicitly setting decaps key
     """
     self._decaps_key = dk
+
+  def ExportEncapsKeyPEM(self) -> str | None:
+    """
+    Export the encaps key in PEM PKCS#8 DER format
+
+    Returns:
+      The PEM string (or None if the key hasn't been generated)
+    """
+    if self.encaps_key is None: return None
+    return export_public_key('mlkem', self._parameter_version, self.encaps_key)
+
+  def ExportDecapsKeyPEM(self) -> str | None:
+    """
+    Export the decaps key (in seed form) in PEM PKCS#8 DER format
+
+    **!!! The decaps key should stay private !!!**
+
+    Returns:
+      The PEM string (or None if the key hasn't been generated)
+    """
+    if self._decaps_key is None: return None
+    return export_private_key_seed('mlkem', self._parameter_version, self._d + self._z)
