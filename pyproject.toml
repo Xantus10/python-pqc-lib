@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "python_pqc_lib"
-version = "0.1.0"
+version = "0.1.1"
 authors = [{name="Xantus10", email="115876592+Xantus10@users.noreply.github.com"}]
 description = "A python implementation of various PQC algorithms"
 readme = "README.md"

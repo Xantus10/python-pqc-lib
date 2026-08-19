@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+Added export keys to PEM option
+
 ## 0.1.0
 
 Fixed bugs for NIST compatibility
