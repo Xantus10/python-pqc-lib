@@ -70,9 +70,15 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-hash_alg-mldsa_hash_alg-context-bytes">MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes)</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsaexportpublickeypem">MLDSA.ExportPublicKeyPEM()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsaexportsecretkeypem">MLDSA.ExportSecretKeyPEM()</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsapublic_key">MLDSA.public_key</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsa_secret_key">MLDSA._secret_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsa_seed">MLDSA._seed</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsasupported_hash_algs">MLDSA.SUPPORTED_HASH_ALGS</a>
     </li>
@@ -243,10 +249,21 @@
 <ul>
 <li><code>ValueError</code>: Invalid argument was provided</li>
 </ul>
+<h3 id="mldsaexportpublickeypem"><code>MLDSA.ExportPublicKeyPEM()</code></h3>
+<p>Export the public key in PEM PKCS#8 DER format</p>
+<p><code>Returns</code></p>
+<p>The PEM string (or None if the key hasn't been generated)</p>
+<h3 id="mldsaexportsecretkeypem"><code>MLDSA.ExportSecretKeyPEM()</code></h3>
+<p>Export the secret key (in seed form) in PEM PKCS#8 DER format</p>
+<p><strong>!!! The secret key should stay private !!!</strong></p>
+<p><code>Returns</code></p>
+<p>The PEM string (or None if the key hasn't been generated)</p>
 <h3 id="mldsapublic_key"><code>MLDSA.public_key</code></h3>
 <p>The byte form of the public key used for verifying a signature. (or <code>None</code> if the key hasn't been generated yet)</p>
 <h3 id="mldsa_secret_key"><code>MLDSA._secret_key</code></h3>
 <p>The byte form of the secret key used for signing. (or <code>None</code> if the key hasn't been generated yet). This value should be kept private.</p>
+<h3 id="mldsa_seed"><code>MLDSA._seed</code></h3>
+<p>The random seed used for key generation (This value should be handled with the same level of secrecy as <a href="#mldsa_secret_key">secret key</a>)</p>
 <h3 id="mldsasupported_hash_algs"><code>MLDSA.SUPPORTED_HASH_ALGS</code></h3>
 <p>A set containing the names of all the supported hash algorithms for pre-hash ML DSA.</p>
 <h3 id="mldsa_hash_bit_strengths"><code>MLDSA._HASH_BIT_STRENGTHS</code></h3>

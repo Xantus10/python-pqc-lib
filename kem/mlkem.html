@@ -61,9 +61,17 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mlkemdecapsulateciphertext-bytes">MLKEM.Decapsulate(ciphertext: bytes)</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkemexportencapskeypem">MLKEM.ExportEncapsKeyPEM()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkemexportdecapskeypem">MLKEM.ExportDecapsKeyPEM()</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#mlkemencaps_key">MLKEM.encaps_key</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mlkem_decaps_key">MLKEM._decaps_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem_d">MLKEM._d</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mlkem_z">MLKEM._z</a>
     </li>
         </ul>
     </li>
@@ -165,10 +173,23 @@
 <li><code>TypeError</code>: If the provided ciphertext is not bytes</li>
 <li><code>ValueError</code>: The ciphertext has invalid length</li>
 </ul>
+<h3 id="mlkemexportencapskeypem"><code>MLKEM.ExportEncapsKeyPEM()</code></h3>
+<p>Export the encaps key in PEM PKCS#8 DER format</p>
+<p><code>Returns</code></p>
+<p>The PEM string (or None if the key hasn't been generated)</p>
+<h3 id="mlkemexportdecapskeypem"><code>MLKEM.ExportDecapsKeyPEM()</code></h3>
+<p>Export the decaps key (in seed form) in PEM PKCS#8 DER format</p>
+<p><strong>!!! The decaps key should stay private !!!</strong></p>
+<p><code>Returns</code></p>
+<p>The PEM string (or None if the key hasn't been generated)</p>
 <h3 id="mlkemencaps_key"><code>MLKEM.encaps_key</code></h3>
 <p>The byte form of the encapsulation key (or <code>None</code> if the key hasn't been generated yet)</p>
 <h3 id="mlkem_decaps_key"><code>MLKEM._decaps_key</code></h3>
 <p>The byte form of the decapsulation key (or <code>None</code> if the key hasn't been generated yet). This value should be kept private.</p>
+<h3 id="mlkem_d"><code>MLKEM._d</code></h3>
+<p>The secret value d used for key generation (This value should be handled with the same level of secrecy as <a href="#mlkem_decaps_key">decaps key</a>)</p>
+<h3 id="mlkem_z"><code>MLKEM._z</code></h3>
+<p>The secret value z used for implicit rejection (This value should be handled with the same level of secrecy as <a href="#mlkem_decaps_key">decaps key</a>)</p>
 <h2 id="mlkem_parameters">MLKEM_Parameters</h2>
 <p>This is a type for a list of parameters for ML KEM. Currently there are three parameter sets:</p>
 <h3 id="mlkem_512">MLKEM_512</h3>
