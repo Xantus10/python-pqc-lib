@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import IntEnum
 
 class AddressType(IntEnum):
@@ -143,3 +145,6 @@ class Address:
       The bytes representing the compressed address
     """
     return self.addr[3] + self.addr[8:16] + self.addr[19:]
+
+  def copy(self) -> Address:
+    return Address(self.addr)
