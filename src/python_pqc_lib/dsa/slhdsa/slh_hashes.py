@@ -155,10 +155,10 @@ class SLH_Hashes_SHA2_cat_3_5(SLH_Hashes):
     return sha256(pk_seed + b'\x00'*(64-self.n) + addr.compressed() + msg1).digest()[:self.n]
 
   def H(self, pk_seed: bytes, addr: Address, msg2: bytes) -> bytes:
-    return sha512(pk_seed + b'\x00'*(64-self.n) + addr.compressed() + msg2).digest()[:self.n]
+    return sha512(pk_seed + b'\x00'*(128-self.n) + addr.compressed() + msg2).digest()[:self.n]
 
   def Tl(self, pk_seed: bytes, addr: Address, msgl: bytes) -> bytes:
-    return sha512(pk_seed + b'\x00'*(64-self.n) + addr.compressed() + msgl).digest()[:self.n]
+    return sha512(pk_seed + b'\x00'*(128-self.n) + addr.compressed() + msgl).digest()[:self.n]
 
 class SLH_Hashes_SHAKE(SLH_Hashes):
   """Hashes used by SLH DSA"""
