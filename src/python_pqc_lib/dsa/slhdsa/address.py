@@ -12,6 +12,7 @@ class AddressType(IntEnum):
 class Address:
   """The address of a tree node"""
   def __init__(self, initial_value: bytes = b'\x00'*32):
+    """The address of a tree node"""
     self.addr = initial_value
 
   def get_layer_address(self) -> int:
@@ -133,3 +134,12 @@ class Address:
       tree_index (int): The new tree index
     """
     self.addr = self.addr[0:28] + tree_index.to_bytes(4)
+
+  def compressed(self) -> bytes:
+    """
+    Create a compressed version of the Address
+
+    Returns:
+      The bytes representing the compressed address
+    """
+    return self.addr[3] + self.addr[8:16] + self.addr[19:]
