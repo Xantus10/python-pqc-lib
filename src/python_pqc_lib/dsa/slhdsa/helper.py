@@ -25,3 +25,30 @@ def base_2b(inp: bytes, base: int, out_len: int):
     bits -= base
     ret[out_ix] = (total >> bits) % mod
   return ret
+
+
+def log2(x: int) -> int:
+  """
+  Helper function for calculating int-based log2
+
+  Args:
+    x (int): Number to compute log of
+
+  Returns:
+    The exponent
+  """
+  return x.bit_length() - 1
+
+
+def ceil_div(numerator: int, denominator: int):
+  """
+  Perform Upper rounded division
+
+  Args:
+    numerator (int): The number to be divided
+    denominator (int): The divisor
+
+  Returns:
+    The result
+  """
+  return (numerator + denominator - 1) // denominator
