@@ -4,7 +4,6 @@ Main ML DSA class
 import numpy as np
 
 from secrets import token_bytes
-from hashlib import sha224, sha256, sha384, sha512, sha3_224, sha3_256, sha3_384, sha3_512, shake_128, shake_256
 
 from .constants import MLDSA_Parameters, Q, SIGN_BOUND, CHECK_SIZES
 from .encoding import power2RoundVec, simpleBitPack, bitPack, simpleBitUnpack, bitUnpack, \
@@ -13,70 +12,11 @@ from .mmatrix import MMatrix, MMatrix_type
 from .mvector import MVector, MVector_type
 from .random_helper import sampleInBall, sampleMatrixPol, sampleSmallPolynomial, h, expandMask
 
+from ...util.prehash import handle_prehash, PreHash_Alg, HASH_BIT_STRENGTHS
 from ...util.pem import export_public_key, export_private_key_seed
-
-from typing import Literal
 
 class MLDSA:
   """Class representing an ML DSA state"""
-  _HASH_BIT_STRENGTHS = {'SHA2-224': 112, 'SHA2-256': 128, 'SHA2-384': 192, 'SHA2-512': 256,
-                         'SHA3-224': 112, 'SHA3-256': 128, 'SHA3-384': 192, 'SHA3-512': 256,
-                         'SHAKE-128': 128, 'SHAKE-256': 256}
-  SUPPORTED_HASH_ALGS = set(_HASH_BIT_STRENGTHS.keys())
-  """Supported hash algorithms for HashSign"""
-  type MLDSA_Hash_Alg = Literal['SHA2-224', 'SHA2-256', 'SHA2-384', 'SHA2-512',
-                                'SHA3-224', 'SHA3-256', 'SHA3-384', 'SHA3-512',
-                                'SHAKE-128', 'SHAKE-256']
-
-  def _handle_hash(self, message: bytes, hash_alg: MLDSA_Hash_Alg) -> tuple[bytes, bytes]:
-    """
-    Handle the hashing of message for Hash MLDSA
-
-    Args:
-      message (bytes): The message to hash
-      hash_alg (MLDSA_Hash_Alg): The hash algorithm to use
-
-    Returns:
-      A tuple of oid, message_hash
-
-    Raises:
-      ValueError: Unsupported hash algorithm was provided
-    """
-    match hash_alg:
-      case 'SHA2-224':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x04'
-        message_hash = sha224(message).digest()
-      case 'SHA2-256':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01'
-        message_hash = sha256(message).digest()
-      case 'SHA2-384':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x02'
-        message_hash = sha384(message).digest()
-      case 'SHA2-512':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03'
-        message_hash = sha512(message).digest()
-      case 'SHA3-224':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x07'
-        message_hash = sha3_224(message).digest()
-      case 'SHA3-256':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x08'
-        message_hash = sha3_256(message).digest()
-      case 'SHA3-384':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x09'
-        message_hash = sha3_384(message).digest()
-      case 'SHA3-512':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0a'
-        message_hash = sha3_512(message).digest()
-      case 'SHAKE-128':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0b'
-        message_hash = shake_128(message).digest(32)
-      case 'SHAKE-256':
-        oid = b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x0c'
-        message_hash = shake_256(message).digest(64)
-      case _:
-        raise ValueError(f'Unsupported hash algorithm \'{hash_alg}\'')
-    return oid, message_hash
-
   def __init__(self, parameters: MLDSA_Parameters):
     """
     Class representing an ML DSA state
@@ -264,19 +204,19 @@ class MLDSA:
     random_seed = token_bytes(32)
     return self._deterministicSign(message, context, random_seed)
 
-  def _deterministicHashSign(self, message: bytes, context: bytes, hash_alg: MLDSA_Hash_Alg, random_seed: bytes):
+  def _deterministicHashSign(self, message: bytes, context: bytes, hash_alg: PreHash_Alg, random_seed: bytes):
     if len(context) > 255: raise ValueError('Context is too long')
-    oid, message_hash = self._handle_hash(message, hash_alg)
+    oid, message_hash = handle_prehash(message, hash_alg)
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerSign(self._secret_key, updated_message, random_seed)
 
-  def HashSign(self, message: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes = b''):
+  def HashSign(self, message: bytes, hash_alg: PreHash_Alg, context: bytes = b''):
     """
     Sign a message digest and a context string
 
     Args:
       message (bytes): The message to sign
-      hash_alg (MLDSA_Hash_Alg): Which hash algorithm to use
+      hash_alg (PreHash_Alg): Which hash algorithm to use
       context (bytes): Context string of max length 255 bytes
 
     Returns:
@@ -286,7 +226,7 @@ class MLDSA:
       ValueError: Context is longer than 255 bytes or Invalid hash alg was provided
     """
     random_seed = token_bytes(32)
-    bit_strength = MLDSA._HASH_BIT_STRENGTHS.get(hash_alg)
+    bit_strength = HASH_BIT_STRENGTHS.get(hash_alg)
     if not bit_strength is None and bit_strength < self.lambd: raise UserWarning(f'Requested hash ({hash_alg}) has bit strength of {bit_strength} bits, but at least {self.lambd} bits is required for MLDSA-{self._parameter_version}')
     return self._deterministicHashSign(message, context, hash_alg, random_seed)
 
@@ -359,7 +299,7 @@ class MLDSA:
     updated_message = b'\x00' + len(context).to_bytes() + context + message
     return self.__innerVerify(public_key, updated_message, sig)
 
-  def HashVerify(self, public_key: bytes, message: bytes, sig: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes = b''):
+  def HashVerify(self, public_key: bytes, message: bytes, sig: bytes, hash_alg: PreHash_Alg, context: bytes = b''):
     """
     Mathematically verify the signature
 
@@ -367,7 +307,7 @@ class MLDSA:
       public_key (bytes): The public key to verify with
       message (bytes): The signed message to verify
       sig (bytes): The signature
-      hash (MLDSA_Hash_Alg): Which hash algorithm to use
+      hash (PreHash_Alg): Which hash algorithm to use
       context (bytes): Context string of max length 255 bytes
 
     Returns:
@@ -379,7 +319,7 @@ class MLDSA:
     if len(context) > 255: raise ValueError('Context is too long')
     if len(public_key) != CHECK_SIZES[self._parameter_version]['pk']: raise ValueError('Public key has invalid size')
     if len(sig) != CHECK_SIZES[self._parameter_version]['sig']: raise ValueError('Signature has invalid size')
-    oid, message_hash = self._handle_hash(message, hash_alg)
+    oid, message_hash = handle_prehash(message, hash_alg)
     updated_message = b'\x01' + len(context).to_bytes() + context + oid + message_hash
     return self.__innerVerify(public_key, updated_message, sig)
 
