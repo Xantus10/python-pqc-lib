@@ -15,3 +15,5 @@ You should only ever include classes and functions from these modules.
 `python_pqc_lib.dsa`
 
 Other forms of import may not work.
+
+There are also a few helper objects in `python_pqc_lib.util` package.
