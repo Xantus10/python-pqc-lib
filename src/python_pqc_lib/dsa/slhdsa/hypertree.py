@@ -93,5 +93,4 @@ class HyperTree:
       addr.set_tree_address(tree_ix)
       tmp_sig = self.get_XMSS_sig_from_HT_sig(sig, i)
       node = self.xmss.pk_from_sig(leaf_ix, tmp_sig, node, pk_seed, addr)
-    print(node, pk_root)
     return node == pk_root
