@@ -18,7 +18,7 @@ ML DSA ([NIST FIPS 204](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf
 
 ## SLH DSA
 
-SLH DSA ([NIST FIPS 205](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf)) is a **digital signature algorithm** based purely on hashes. Specifically it relies on schemes like WOTS+, FORS and Merkle trees to create a signature. It was created as a fallback in case the module lattice problem (For ML DSA) turns out to be less secure than thought.
+SLH DSA ([NIST FIPS 205](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf)) is a **digital signature algorithm** based purely on hashes. Specifically it relies on schemes like WOTS+, FORS and Merkle trees to create a signature. It was created as a fallback in case the module lattice problem (For ML DSA) turns out to be less secure than thought.
 
 ## Security notice
 
