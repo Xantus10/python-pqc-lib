@@ -8,9 +8,13 @@ nav:
     - ML KEM: kem/mlkem.md
   - dsa:
     - ML DSA: dsa/mldsa.md
+    - SLH DSA: dsa/slhdsa.md
   - examples:
     - ML KEM: examples/mlkem.md
     - ML DSA: examples/mldsa.md
+    - SLH DSA: dsa/slhdsa.md
+  - util:
+    - util.md
 theme: readthedocs
 use_directory_urls: false
 markdown_extensions: 

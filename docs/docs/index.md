@@ -16,6 +16,10 @@ The algorithm itself is based on MLWE (Modular Learning With Errors) problem whi
 
 ML DSA ([NIST FIPS 204](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf)) is a **digital signature algorithm** based on the same principles as `ML KEM`.
 
+## SLH DSA
+
+SLH DSA ([NIST FIPS 205](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf)) is a **digital signature algorithm** based purely on hashes. Specifically it relies on schemes like WOTS+, FORS and Merkle trees to create a signature. It was created as a fallback in case the module lattice problem (For ML DSA) turns out to be less secure than thought.
+
 ## Security notice
 
 While the solution is always tested to be functional and best effort was made to adhere to the NIST standards and specifications, I do not guarantee that the algorithm is secure.
