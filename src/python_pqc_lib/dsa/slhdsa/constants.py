@@ -26,9 +26,11 @@ Parameter set for SLH DSA
 `0` - Hash type
 
 `1` - SLH DSA Constants (n, h, d, h_sec, a, k, lgw, m)
+
+`2` - Official name of the parameter set
 """
 
-SLHDSA_SHA2_128_SMALL = ('SHA2', _SLHDSA_128_S)
+SLHDSA_SHA2_128_SMALL = ('SHA2', _SLHDSA_128_S, 'SLH-DSA-SHA2-128s')
 """
 SLH DSA parameter set
 
@@ -36,7 +38,7 @@ SLH DSA parameter set
 - Security category: 1
 - Prioritize: Small signature
 """
-SLHDSA_SHA2_128_FAST = ('SHA2', _SLHDSA_128_F)
+SLHDSA_SHA2_128_FAST = ('SHA2', _SLHDSA_128_F, 'SLH-DSA-SHA2-128f')
 """
 SLH DSA parameter set
 
@@ -44,7 +46,7 @@ SLH DSA parameter set
 - Security category: 1
 - Prioritize: Fast signing
 """
-SLHDSA_SHA2_192_SMALL = ('SHA2', _SLHDSA_192_S)
+SLHDSA_SHA2_192_SMALL = ('SHA2', _SLHDSA_192_S, 'SLH-DSA-SHA2-192s')
 """
 SLH DSA parameter set
 
@@ -52,7 +54,7 @@ SLH DSA parameter set
 - Security category: 3
 - Prioritize: Small signature
 """
-SLHDSA_SHA2_192_FAST = ('SHA2', _SLHDSA_192_F)
+SLHDSA_SHA2_192_FAST = ('SHA2', _SLHDSA_192_F, 'SLH-DSA-SHA2-192f')
 """
 SLH DSA parameter set
 
@@ -60,7 +62,7 @@ SLH DSA parameter set
 - Security category: 3
 - Prioritize: Fast signing
 """
-SLHDSA_SHA2_256_SMALL = ('SHA2', _SLHDSA_256_S)
+SLHDSA_SHA2_256_SMALL = ('SHA2', _SLHDSA_256_S, 'SLH-DSA-SHA2-256s')
 """
 SLH DSA parameter set
 
@@ -68,7 +70,7 @@ SLH DSA parameter set
 - Security category: 5
 - Prioritize: Small signature
 """
-SLHDSA_SHA2_256_FAST = ('SHA2', _SLHDSA_256_F)
+SLHDSA_SHA2_256_FAST = ('SHA2', _SLHDSA_256_F, 'SLH-DSA-SHA2-256f')
 """
 SLH DSA parameter set
 
@@ -77,7 +79,7 @@ SLH DSA parameter set
 - Prioritize: Fast signing
 """
 
-SLHDSA_SHAKE_128_SMALL = ('SHKE2', _SLHDSA_128_S)
+SLHDSA_SHAKE_128_SMALL = ('SHAKE', _SLHDSA_128_S, 'SLH-DSA-SHAKE-128s')
 """
 SLH DSA parameter set
 
@@ -85,7 +87,7 @@ SLH DSA parameter set
 - Security category: 1
 - Prioritize: Small signature
 """
-SLHDSA_SHAKE_128_FAST = ('SHAKE', _SLHDSA_128_F)
+SLHDSA_SHAKE_128_FAST = ('SHAKE', _SLHDSA_128_F, 'SLH-DSA-SHAKE-128f')
 """
 SLH DSA parameter set
 
@@ -93,7 +95,7 @@ SLH DSA parameter set
 - Security category: 1
 - Prioritize: Fast signing
 """
-SLHDSA_SHAKE_192_SMALL = ('SHKE2', _SLHDSA_192_S)
+SLHDSA_SHAKE_192_SMALL = ('SHAKE', _SLHDSA_192_S, 'SLH-DSA-SHAKE-192s')
 """
 SLH DSA parameter set
 
@@ -101,7 +103,7 @@ SLH DSA parameter set
 - Security category: 3
 - Prioritize: Small signature
 """
-SLHDSA_SHAKE_192_FAST = ('SHAKE', _SLHDSA_192_F)
+SLHDSA_SHAKE_192_FAST = ('SHAKE', _SLHDSA_192_F, 'SLH-DSA-SHAKE-192f')
 """
 SLH DSA parameter set
 
@@ -109,7 +111,7 @@ SLH DSA parameter set
 - Security category: 3
 - Prioritize: Fast signing
 """
-SLHDSA_SHAKE_256_SMALL = ('SHKE2', _SLHDSA_256_S)
+SLHDSA_SHAKE_256_SMALL = ('SHAKE', _SLHDSA_256_S, 'SLH-DSA-SHAKE-256s')
 """
 SLH DSA parameter set
 
@@ -117,7 +119,7 @@ SLH DSA parameter set
 - Security category: 5
 - Prioritize: Small signature
 """
-SLHDSA_SHAKE_256_FAST = ('SHAKE', _SLHDSA_256_F)
+SLHDSA_SHAKE_256_FAST = ('SHAKE', _SLHDSA_256_F, 'SLH-DSA-SHAKE-256f')
 """
 SLH DSA parameter set
 
@@ -125,3 +127,12 @@ SLH DSA parameter set
 - Security category: 5
 - Prioritize: Fast signing
 """
+
+NAME_TO_PARAM_SET = {it[2]: it for it in [
+  SLHDSA_SHA2_128_FAST, SLHDSA_SHA2_128_SMALL,
+  SLHDSA_SHA2_192_FAST, SLHDSA_SHA2_192_SMALL,
+  SLHDSA_SHA2_256_FAST, SLHDSA_SHA2_256_SMALL,
+  SLHDSA_SHAKE_128_FAST, SLHDSA_SHAKE_128_SMALL,
+  SLHDSA_SHAKE_192_FAST, SLHDSA_SHAKE_192_SMALL,
+  SLHDSA_SHAKE_256_FAST, SLHDSA_SHAKE_256_SMALL
+]}

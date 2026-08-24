@@ -1,5 +1,23 @@
 from .mldsa.mldsa import MLDSA
 from .mldsa.constants import MLDSA_44, MLDSA_65, MLDSA_87
+
+from .slhdsa.slhdsa import SLHDSA
+from .slhdsa.constants import SLHDSA_SHA2_128_FAST, SLHDSA_SHA2_128_SMALL, \
+                              SLHDSA_SHA2_192_FAST, SLHDSA_SHA2_192_SMALL, \
+                              SLHDSA_SHA2_256_FAST, SLHDSA_SHA2_256_SMALL, \
+                              SLHDSA_SHAKE_128_FAST, SLHDSA_SHAKE_128_SMALL, \
+                              SLHDSA_SHAKE_192_FAST, SLHDSA_SHAKE_192_SMALL, \
+                              SLHDSA_SHAKE_256_FAST, SLHDSA_SHAKE_256_SMALL
+
 from ..util.prehash import SUPPORTED_HASH_ALGS
 
-__all__ = ['MLDSA', 'MLDSA_44', 'MLDSA_65', 'MLDSA_87', 'SUPPORTED_HASH_ALGS']
+__all__ = [
+  'MLDSA', 'MLDSA_44', 'MLDSA_65', 'MLDSA_87', 'SUPPORTED_HASH_ALGS',
+  'SLHDSA',
+  'SLHDSA_SHA2_128_FAST', 'SLHDSA_SHA2_128_SMALL',
+  'SLHDSA_SHA2_192_FAST', 'SLHDSA_SHA2_192_SMALL',
+  'SLHDSA_SHA2_256_FAST', 'SLHDSA_SHA2_256_SMALL',
+  'SLHDSA_SHAKE_128_FAST', 'SLHDSA_SHAKE_128_SMALL',
+  'SLHDSA_SHAKE_192_FAST', 'SLHDSA_SHAKE_192_SMALL',
+  'SLHDSA_SHAKE_256_FAST', 'SLHDSA_SHAKE_256_SMALL'
+]
