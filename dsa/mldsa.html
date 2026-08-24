@@ -64,11 +64,11 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsasignmessage-bytes-context-bytes">MLDSA.Sign(message: bytes, context: bytes)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mldsahashsignmessage-bytes-hash_alg-mldsa_hash_alg-context-bytes">MLDSA.HashSign(message: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes)</a>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsahashsignmessage-bytes-hash_alg-prehash_alg-context-bytes">MLDSA.HashSign(message: bytes, hash_alg: PreHash_Alg, context: bytes)</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsaverifypublic_key-bytes-message-bytes-sig-bytes-context-bytes">MLDSA.Verify(public_key: bytes, message: bytes, sig: bytes, context: bytes)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-hash_alg-mldsa_hash_alg-context-bytes">MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes)</a>
+    <li class="toctree-l3"><a class="reference internal" href="#mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-hash_alg-prehash_alg-context-bytes">MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, hash_alg: PreHash_Alg, context: bytes)</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsaexportpublickeypem">MLDSA.ExportPublicKeyPEM()</a>
     </li>
@@ -79,12 +79,6 @@
     <li class="toctree-l3"><a class="reference internal" href="#mldsa_secret_key">MLDSA._secret_key</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#mldsa_seed">MLDSA._seed</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mldsasupported_hash_algs">MLDSA.SUPPORTED_HASH_ALGS</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mldsa_hash_bit_strengths">MLDSA._HASH_BIT_STRENGTHS</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#mldsamldsa_hash_alg">MLDSA.MLDSA_Hash_Alg</a>
     </li>
         </ul>
     </li>
@@ -100,12 +94,21 @@
     </li>
     </ul>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="slhdsa.html">SLH DSA</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">examples</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../examples/mlkem.html">ML KEM</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../examples/mldsa.html">ML DSA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="slhdsa.html">SLH DSA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">util</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../util.html">Util</a>
                   </li>
               </ul>
       </div>
@@ -168,7 +171,7 @@
 <ul>
 <li><code>ValueError</code>: Context is longer than 255 bytes</li>
 </ul>
-<h3 id="mldsahashsignmessage-bytes-hash_alg-mldsa_hash_alg-context-bytes"><code>MLDSA.HashSign(message: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes)</code></h3>
+<h3 id="mldsahashsignmessage-bytes-hash_alg-prehash_alg-context-bytes"><code>MLDSA.HashSign(message: bytes, hash_alg: PreHash_Alg, context: bytes)</code></h3>
 <p>Sign a digest of the message and context string.</p>
 <p><code>Args</code></p>
 <ul>
@@ -176,7 +179,7 @@
 <li>The message to sign</li>
 </ul>
 </li>
-<li><code>hash_alg</code> : <a href="#mldsamldsa_hash_alg">MLDSA_Hash_Alg</a><ul>
+<li><code>hash_alg</code> : <a href="../util.html#prehash_alg">PreHash_Alg</a><ul>
 <li>Hash function to use</li>
 </ul>
 </li>
@@ -218,7 +221,7 @@
 <ul>
 <li><code>ValueError</code>: Invalid argument was provided</li>
 </ul>
-<h3 id="mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-hash_alg-mldsa_hash_alg-context-bytes"><code>MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, hash_alg: MLDSA_Hash_Alg, context: bytes)</code></h3>
+<h3 id="mldsahashverifypublic_key-bytes-message-bytes-sig-bytes-hash_alg-prehash_alg-context-bytes"><code>MLDSA.HashVerify(public_key: bytes, message: bytes, sig: bytes, hash_alg: PreHash_Alg, context: bytes)</code></h3>
 <p>Verify a signature.</p>
 <p><code>Args</code></p>
 <ul>
@@ -234,7 +237,7 @@
 <li>The signature</li>
 </ul>
 </li>
-<li><code>hash_alg</code> : <a href="#mldsamldsa_hash_alg">MLDSA_Hash_Alg</a><ul>
+<li><code>hash_alg</code> : <a href="../util.html#prehash_alg">PreHash_Alg</a><ul>
 <li>Hash function to use</li>
 </ul>
 </li>
@@ -264,24 +267,6 @@
 <p>The byte form of the secret key used for signing. (or <code>None</code> if the key hasn't been generated yet). This value should be kept private.</p>
 <h3 id="mldsa_seed"><code>MLDSA._seed</code></h3>
 <p>The random seed used for key generation (This value should be handled with the same level of secrecy as <a href="#mldsa_secret_key">secret key</a>)</p>
-<h3 id="mldsasupported_hash_algs"><code>MLDSA.SUPPORTED_HASH_ALGS</code></h3>
-<p>A set containing the names of all the supported hash algorithms for pre-hash ML DSA.</p>
-<h3 id="mldsa_hash_bit_strengths"><code>MLDSA._HASH_BIT_STRENGTHS</code></h3>
-<p>Defined hash bit strengths for hashes used in pre-hash ML DSA. Generally a hash of bit strength of at least $\lambda$ bits. (For more information, see <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">the NIST specification</a> - Last paragraph of section 5.4)</p>
-<h3 id="mldsamldsa_hash_alg"><code>MLDSA.MLDSA_Hash_Alg</code></h3>
-<p>A type string literal of the following</p>
-<ul>
-<li><code>SHA2-224</code> - (Don't use, insufficient bit strength)</li>
-<li><code>SHA2-256</code></li>
-<li><code>SHA2-384</code></li>
-<li><code>SHA2-512</code></li>
-<li><code>SHA3-224</code> - (Don't use, insufficient bit strength)</li>
-<li><code>SHA3-256</code></li>
-<li><code>SHA3-384</code></li>
-<li><code>SHA3-512</code></li>
-<li><code>SHAKE-128</code></li>
-<li><code>SHAKE-512</code></li>
-</ul>
 <h2 id="mldsa_parameters">MLDSA_Parameters</h2>
 <p>This is a type for a list of parameters for ML DSA. Currently there are three parameter sets:</p>
 <h3 id="mldsa_44">MLDSA_44</h3>
@@ -295,7 +280,7 @@
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../kem/mlkem.html" class="btn btn-neutral float-left" title="ML KEM"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../examples/mlkem.html" class="btn btn-neutral float-right" title="ML KEM">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="slhdsa.html" class="btn btn-neutral float-right" title="SLH DSA">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -325,7 +310,7 @@
       <span><a href="../kem/mlkem.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../examples/mlkem.html" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="slhdsa.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

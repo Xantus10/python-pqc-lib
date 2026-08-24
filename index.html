@@ -52,6 +52,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#ml-dsa">ML DSA</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slh-dsa">SLH DSA</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#security-notice">Security notice</a>
     </li>
     </ul>
@@ -70,12 +72,21 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="dsa/mldsa.html">ML DSA</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="dsa/slhdsa.html">SLH DSA</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">examples</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="examples/mlkem.html">ML KEM</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="examples/mldsa.html">ML DSA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="dsa/slhdsa.html">SLH DSA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">util</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="util.html">Util</a>
                   </li>
               </ul>
       </div>
@@ -111,6 +122,8 @@
 <p>The algorithm itself is based on MLWE (Modular Learning With Errors) problem which is believed to be quantum resistant.</p>
 <h2 id="ml-dsa">ML DSA</h2>
 <p>ML DSA (<a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">NIST FIPS 204</a>) is a <strong>digital signature algorithm</strong> based on the same principles as <code>ML KEM</code>.</p>
+<h2 id="slh-dsa">SLH DSA</h2>
+<p>SLH DSA (<a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">NIST FIPS 205</a>) is a <strong>digital signature algorithm</strong> based purely on hashes. Specifically it relies on schemes like WOTS+, FORS and Merkle trees to create a signature. It was created as a fallback in case the module lattice problem (For ML DSA) turns out to be less secure than thought.</p>
 <h2 id="security-notice">Security notice</h2>
 <p>While the solution is always tested to be functional and best effort was made to adhere to the NIST standards and specifications, I do not guarantee that the algorithm is secure.</p>
 <p>Also, since this is an implementation written purely in python, while it can be used in smaller projects, production code should make use of something like the <a href="https://github.com/pq-code-package">PQC Code package</a>.</p>
@@ -166,5 +179,5 @@
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2026-08-19 14:18:24.117808+00:00
+Build Date UTC : 2026-08-24 16:53:05.168717+00:00
 -->

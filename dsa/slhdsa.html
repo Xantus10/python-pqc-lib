@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>SLH DSA - python PQC lib</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SLH DSA";
+        var mkdocs_page_input_path = "dsa\\slhdsa.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../index.html" class="icon icon-home"> python PQC lib
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_structure.html">Basic structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">kem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../kem/mlkem.html">ML KEM</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">dsa</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="mldsa.html">ML DSA</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SLH DSA</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsa__init__parameters-slhdsa_parameters">SLHDSA.__init__(parameters: SLHDSA_Parameters)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsakeygen">SLHDSA.KeyGen()</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsasignmsg-bytes-ctx-bytes-b">SLHDSA.Sign(msg: bytes, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsahashsignmsg-bytes-hash_alg-prehash_alg-ctx-bytes-b">SLHDSA.HashSign(msg: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsaverifymsg-bytes-sig-bytes-public_key-bytes-ctx-bytes-b">SLHDSA.Verify(msg: bytes, sig: bytes, public_key: bytes, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsahashverifymsg-bytes-sig-bytes-public_key-bytes-hash_alg-prehash_alg-ctx-bytes-b">SLHDSA.HashVerify(msg: bytes, sig: bytes, public_key: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsapublic_key">SLHDSA.public_key</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsa_secret_key">SLHDSA._secret_key</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">examples</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/mlkem.html">ML KEM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/mldsa.html">ML DSA</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SLH DSA</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsa__init__parameters-slhdsa_parameters">SLHDSA.__init__(parameters: SLHDSA_Parameters)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsakeygen">SLHDSA.KeyGen()</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsasignmsg-bytes-ctx-bytes-b">SLHDSA.Sign(msg: bytes, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsahashsignmsg-bytes-hash_alg-prehash_alg-ctx-bytes-b">SLHDSA.HashSign(msg: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsaverifymsg-bytes-sig-bytes-public_key-bytes-ctx-bytes-b">SLHDSA.Verify(msg: bytes, sig: bytes, public_key: bytes, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsahashverifymsg-bytes-sig-bytes-public_key-bytes-hash_alg-prehash_alg-ctx-bytes-b">SLHDSA.HashVerify(msg: bytes, sig: bytes, public_key: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsapublic_key">SLHDSA.public_key</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsa_secret_key">SLHDSA._secret_key</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">util</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../util.html">Util</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">python PQC lib</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">examples</li>
+      <li class="breadcrumb-item active">SLH DSA</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Xantus10/python-pqc-lib/edit/master/docs/docs/dsa/slhdsa.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>Stateless Hash-Based Digital Signature Standard as defined in <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf">NIST FIPS 205</a>.</p>
+<h2 id="class-slhdsa"><code>class SLHDSA</code></h2>
+<p>Class representing an SLH DSA state</p>
+<h3 id="slhdsa__init__parameters-slhdsa_parameters"><code>SLHDSA.__init__(parameters: SLHDSA_Parameters)</code></h3>
+<p>Class representing an SLH DSA state</p>
+<p><code>Args</code></p>
+<ul>
+<li><code>parameters</code> : <a href="#slhdsa_parameters">SLHDSA_Parameters</a><ul>
+<li>A special list of parameters, you should <strong>always</strong> pass an imported constant and <strong>never</strong> a raw list</li>
+</ul>
+</li>
+</ul>
+<h3 id="slhdsakeygen"><code>SLHDSA.KeyGen()</code></h3>
+<p>Generate keys for SLH DSA</p>
+<p>Keys are stored internally. See <a href="#slhdsapublic_key">public_key</a></p>
+<h3 id="slhdsasignmsg-bytes-ctx-bytes-b"><code>SLHDSA.Sign(msg: bytes, ctx: bytes = b'')</code></h3>
+<p>Sign a message using SLH DSA</p>
+<p><code>Args</code></p>
+<ul>
+<li>msg : bytes<ul>
+<li>The message to be signed</li>
+</ul>
+</li>
+<li>ctx : bytes<ul>
+<li>The context string</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>The SLH DSA signature</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: The context string is too long</li>
+</ul>
+<h3 id="slhdsahashsignmsg-bytes-hash_alg-prehash_alg-ctx-bytes-b"><code>SLHDSA.HashSign(msg: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</code></h3>
+<p>Sign a message using SLH DSA pre-hash variant</p>
+<p><code>Args</code></p>
+<ul>
+<li>msg : bytes<ul>
+<li>The message to be signed</li>
+</ul>
+</li>
+<li>hash_alg : <a href="../util.html#prehash_alg">PreHash_Alg</a><ul>
+<li>The hash algorithm to use for pre-hash</li>
+</ul>
+</li>
+<li>ctx : bytes<ul>
+<li>The context string</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>The SLH DSA signature</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: The context string is too long or Invalid hash alg was provided</li>
+</ul>
+<h3 id="slhdsaverifymsg-bytes-sig-bytes-public_key-bytes-ctx-bytes-b"><code>SLHDSA.Verify(msg: bytes, sig: bytes, public_key: bytes, ctx: bytes = b'')</code></h3>
+<p>Verify an SLH DSA signature</p>
+<p><code>Args</code></p>
+<ul>
+<li>msg : bytes<ul>
+<li>The signed message</li>
+</ul>
+</li>
+<li>sig : bytes<ul>
+<li>The signature</li>
+</ul>
+</li>
+<li>public_key : bytes<ul>
+<li>The public key to use</li>
+</ul>
+</li>
+<li>ctx : bytes<ul>
+<li>The context string</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>True if the signature is valid</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: The context string is too long</li>
+</ul>
+<h3 id="slhdsahashverifymsg-bytes-sig-bytes-public_key-bytes-hash_alg-prehash_alg-ctx-bytes-b"><code>SLHDSA.HashVerify(msg: bytes, sig: bytes, public_key: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</code></h3>
+<p>Verify a pre-hash SLH DSA signature</p>
+<p><code>Args</code></p>
+<ul>
+<li>msg : bytes<ul>
+<li>The signed message</li>
+</ul>
+</li>
+<li>sig : bytes<ul>
+<li>The signature</li>
+</ul>
+</li>
+<li>public_key : bytes<ul>
+<li>The public key to use</li>
+</ul>
+</li>
+<li>hash_alg : <a href="../util.html#prehash_alg">PreHash_Alg</a><ul>
+<li>The hash algorithm to use for pre-hash</li>
+</ul>
+</li>
+<li>ctx : bytes<ul>
+<li>The context string</li>
+</ul>
+</li>
+</ul>
+<p><code>Returns</code></p>
+<p>True if the signature is valid</p>
+<p><code>Raises</code></p>
+<ul>
+<li><code>ValueError</code>: The context string is too long or Invalid hash alg was provided</li>
+</ul>
+<h3 id="slhdsapublic_key"><code>SLHDSA.public_key</code></h3>
+<p>The byte form of the public key used for verifying a signature. (or <code>None</code> if the key hasn't been generated yet)</p>
+<h3 id="slhdsa_secret_key"><code>SLHDSA._secret_key</code></h3>
+<p>The byte form of the secret key used for signing. (or <code>None</code> if the key hasn't been generated yet). This value should be kept private.</p>
+<h2 id="slhdsa_parameters">SLHDSA_Parameters</h2>
+<p>This is a type for a list of parameters for SLH DSA.</p>
+<p>The parameter sets can be differentiated by the following parameters:</p>
+<ul>
+<li>Base hash function to use<ul>
+<li><code>SHA2</code></li>
+<li><code>SHAKE</code></li>
+</ul>
+</li>
+<li>Number of security bits (directly corresponds to security category)<ul>
+<li><code>128</code> - Security category 1</li>
+<li><code>192</code> - Security category 3</li>
+<li><code>256</code> - Security category 5</li>
+</ul>
+</li>
+<li>Small signature vs Fast signing<ul>
+<li><code>s</code> - Will produce smaller signature (About 1/2 of <code>f</code>) at the cost of computation time</li>
+<li><code>f</code> - Will run faster than <code>s</code>, but will produce larger signature</li>
+</ul>
+</li>
+</ul>
+<h3 id="slhdsa_sha2_128_small">SLHDSA_SHA2_128_SMALL</h3>
+<ul>
+<li>Hash: SHA2</li>
+<li>Security category: 1</li>
+<li>Prioritize: Small signature</li>
+</ul>
+<h3 id="slhdsa_sha2_128_fast">SLHDSA_SHA2_128_FAST</h3>
+<ul>
+<li>Hash: SHA2</li>
+<li>Security category: 1</li>
+<li>Prioritize: Fast signing</li>
+</ul>
+<h3 id="slhdsa_sha2_192_small">SLHDSA_SHA2_192_SMALL</h3>
+<ul>
+<li>Hash: SHA2</li>
+<li>Security category: 3</li>
+<li>Prioritize: Small signature</li>
+</ul>
+<h3 id="slhdsa_sha2_192_fast">SLHDSA_SHA2_192_FAST</h3>
+<ul>
+<li>Hash: SHA2</li>
+<li>Security category: 3</li>
+<li>Prioritize: Fast signing</li>
+</ul>
+<h3 id="slhdsa_sha2_256_small">SLHDSA_SHA2_256_SMALL</h3>
+<ul>
+<li>Hash: SHA2</li>
+<li>Security category: 5</li>
+<li>Prioritize: Small signature</li>
+</ul>
+<h3 id="slhdsa_sha2_256_fast">SLHDSA_SHA2_256_FAST</h3>
+<ul>
+<li>Hash: SHA2</li>
+<li>Security category: 5</li>
+<li>Prioritize: Fast signing</li>
+</ul>
+<h3 id="slhdsa_shake_128_small">SLHDSA_SHAKE_128_SMALL</h3>
+<ul>
+<li>Hash: SHAKE</li>
+<li>Security category: 1</li>
+<li>Prioritize: Small signature</li>
+</ul>
+<h3 id="slhdsa_shake_128_fast">SLHDSA_SHAKE_128_FAST</h3>
+<ul>
+<li>Hash: SHAKE</li>
+<li>Security category: 1</li>
+<li>Prioritize: Fast signing</li>
+</ul>
+<h3 id="slhdsa_shake_192_small">SLHDSA_SHAKE_192_SMALL</h3>
+<ul>
+<li>Hash: SHAKE</li>
+<li>Security category: 3</li>
+<li>Prioritize: Small signature</li>
+</ul>
+<h3 id="slhdsa_shake_192_fast">SLHDSA_SHAKE_192_FAST</h3>
+<ul>
+<li>Hash: SHAKE</li>
+<li>Security category: 3</li>
+<li>Prioritize: Fast signing</li>
+</ul>
+<h3 id="slhdsa_shake_256_small">SLHDSA_SHAKE_256_SMALL</h3>
+<ul>
+<li>Hash: SHAKE</li>
+<li>Security category: 5</li>
+<li>Prioritize: Small signature</li>
+</ul>
+<h3 id="slhdsa_shake_256_fast">SLHDSA_SHAKE_256_FAST</h3>
+<ul>
+<li>Hash: SHAKE</li>
+<li>Security category: 5</li>
+<li>Prioritize: Fast signing</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../examples/mldsa.html" class="btn btn-neutral float-left" title="ML DSA"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../util.html" class="btn btn-neutral float-right" title="Util">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Xantus10/python-pqc-lib" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../examples/mldsa.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../util.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

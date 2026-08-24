@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>ML DSA - python PQC lib</title>
+    <title>Example SLH DSA usage - python PQC lib</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "ML DSA";
-        var mkdocs_page_input_path = "examples\\mldsa.md";
+        var mkdocs_page_name = "Example SLH DSA usage";
+        var mkdocs_page_input_path = "examples\\slhdsa.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -60,16 +60,10 @@
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">examples</span></p>
-              <ul class="current">
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="mlkem.html">ML KEM</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">ML DSA</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#normal-signature">Normal signature</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#hash-signature">Hash signature</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="mldsa.html">ML DSA</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../dsa/slhdsa.html">SLH DSA</a>
                   </li>
@@ -93,10 +87,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html" class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">examples</li>
-      <li class="breadcrumb-item active">ML DSA</li>
+      <li class="breadcrumb-item active">Example SLH DSA usage</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/Xantus10/python-pqc-lib/edit/master/docs/docs/examples/mldsa.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/Xantus10/python-pqc-lib/edit/master/docs/docs/examples/slhdsa.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -104,14 +97,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="example-ml-dsa-usage">Example ML DSA usage</h1>
+                <h1 id="example-slh-dsa-usage">Example SLH DSA usage</h1>
 <h2 id="normal-signature">Normal signature</h2>
-<pre><code class="language-python">from python_pqc_lib.dsa import MLDSA, MLDSA_65
+<pre><code class="language-python">from python_pqc_lib.dsa import SLHDSA, SLHDSA_SHA2_192_FAST
 
 
 ### SIGNER SIDE
 
-signer = MLDSA(MLDSA_65)
+signer = SLHDSA(SLHDSA_SHA2_192_FAST)
 
 signer.KeyGen()
 
@@ -126,21 +119,21 @@ signature = signer.Sign(message, context)
 
 ### VERIFICATION SIDE
 
-verification = MLDSA(MLDSA_65)
+verification = SLHDSA(SLHDSA_SHA2_192_FAST)
 
-result = verification.Verify(signer.public_key, message, signature, context)
+result = verification.Verify(message, signature, signer.public_key, context)
 
 assert result
 
 ###
 </code></pre>
 <h2 id="hash-signature">Hash signature</h2>
-<pre><code class="language-python">from python_pqc_lib.dsa import MLDSA, MLDSA_65
+<pre><code class="language-python">from python_pqc_lib.dsa import SLHDSA, SLHDSA_SHA2_192_FAST
 
 
 ### SIGNER SIDE
 
-signer = MLDSA(MLDSA_65)
+signer = SLHDSA(SLHDSA_SHA2_192_FAST)
 
 signer.KeyGen()
 
@@ -157,9 +150,9 @@ signature = signer.HashSign(message, 'SHA3-512', context)
 
 ### VERIFICATION SIDE
 
-verification = MLDSA(MLDSA_65)
+verification = SLHDSA(SLHDSA_SHA2_192_FAST)
 
-result = verification.HashVerify(signer.public_key, message, signature, 'SHA3-512', context)
+result = verification.HashVerify(message, signature, signer.public_key, 'SHA3-512', context)
 
 assert result
 
@@ -168,10 +161,6 @@ assert result
               
             </div>
           </div><footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="mlkem.html" class="btn btn-neutral float-left" title="ML KEM"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../dsa/slhdsa.html" class="btn btn-neutral float-right" title="SLH DSA">Next <span class="icon icon-circle-arrow-right"></span></a>
-    </div>
 
   <hr/>
 
@@ -197,10 +186,6 @@ assert result
         </span>
     
     
-      <span><a href="mlkem.html" style="color: #fcfcfc">&laquo; Previous</a></span>
-    
-    
-      <span><a href="../dsa/slhdsa.html" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
