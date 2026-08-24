@@ -240,6 +240,9 @@ class SLHDSA:
       public_key (bytes): The public key to use
       ctx (bytes): The context string
 
+    Returns:
+      True if the signature is valid
+
     Raises:
       ValueError: The context string is too long
     """
@@ -257,6 +260,9 @@ class SLHDSA:
       public_key (bytes): The public key to use
       hash_alg (PreHash_Alg): The hash algorithm to use for pre-hash
       ctx (bytes): The context string
+
+    Returns:
+      True if the signature is valid
 
     Raises:
       ValueError: The context string is too long or Invalid hash alg was provided
