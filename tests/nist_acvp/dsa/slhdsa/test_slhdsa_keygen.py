@@ -5,7 +5,7 @@ from typing import TypedDict
 
 from python_pqc_lib.dsa import *
 
-pytestmark = [pytest.mark.nist, pytest.mark.dsa, pytest.mark.slhdsa]
+pytestmark = [pytest.mark.nist, pytest.mark.dsa, pytest.mark.slhdsa, pytest.mark.slow]
 
 cur_dir = Path(__file__).parent
 

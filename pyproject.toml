@@ -44,5 +44,6 @@ markers = [
   "mlkem: Tests for ML KEM scheme",
   "dsa: Tests which are part of DSA",
   "mldsa: Tests for ML DSA scheme",
-  "slhdsa: Tests for SLH DSA scheme"
+  "slhdsa: Tests for SLH DSA scheme",
+  "slow: Tests which take some time"
 ]
