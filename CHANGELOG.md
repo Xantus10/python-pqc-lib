@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+Added SLH DSA
+
+Fixed a minor bug in PEM exports
+
 ## 0.1.1
 
 Added export keys to PEM option

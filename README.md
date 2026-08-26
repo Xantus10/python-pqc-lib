@@ -10,7 +10,7 @@ Currently supports the following algorithms:
     - `ML KEM` - [NIST FIPS 203](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.203.pdf)
 - Digital signature
     - `ML DSA` - [NIST FIPS 204](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf)
-    - `SLH DSA` (untested) - [NIST FIPS 205](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf)
+    - `SLH DSA` - [NIST FIPS 205](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf)
 
 ## Dependencies
 
@@ -24,5 +24,6 @@ Also, since this is an implementation written purely in python, while it can be 
 
 ## TODO
 
+- Clean up test JSON (remove redundant data)
+- PEM key imports
 - Create Unit tests
-- Test SLH DSA with NIST ACVP
