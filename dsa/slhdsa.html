@@ -70,6 +70,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#slhdsahashverifymsg-bytes-sig-bytes-public_key-bytes-hash_alg-prehash_alg-ctx-bytes-b">SLHDSA.HashVerify(msg: bytes, sig: bytes, public_key: bytes, hash_alg: PreHash_Alg, ctx: bytes = b'')</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsaexportpublickeypem">SLHDSA.ExportPublicKeyPEM()</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#slhdsaexportsecretkeypem">SLHDSA.ExportSecretKeyPEM()</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#slhdsapublic_key">SLHDSA.public_key</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#slhdsa_secret_key">SLHDSA._secret_key</a>
@@ -231,6 +235,15 @@
 <ul>
 <li><code>ValueError</code>: The context string is too long or Invalid hash alg was provided</li>
 </ul>
+<h3 id="slhdsaexportpublickeypem"><code>SLHDSA.ExportPublicKeyPEM()</code></h3>
+<p>Export the public key in PEM PKCS#8 DER format</p>
+<p><code>Returns</code></p>
+<p>The PEM string (or None if the key hasn't been generated)</p>
+<h3 id="slhdsaexportsecretkeypem"><code>SLHDSA.ExportSecretKeyPEM()</code></h3>
+<p>Export the secret key (in seed form) in PEM PKCS#8 DER format</p>
+<p><strong>!!! The secret key should stay private !!!</strong></p>
+<p><code>Returns</code></p>
+<p>The PEM string (or None if the key hasn't been generated)</p>
 <h3 id="slhdsapublic_key"><code>SLHDSA.public_key</code></h3>
 <p>The byte form of the public key used for verifying a signature. (or <code>None</code> if the key hasn't been generated yet)</p>
 <h3 id="slhdsa_secret_key"><code>SLHDSA._secret_key</code></h3>
