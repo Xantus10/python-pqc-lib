@@ -27,3 +27,4 @@ Also, since this is an implementation written purely in python, while it can be 
 - Clean up test JSON (remove redundant data)
 - PEM key imports
 - Create Unit tests
+- Once they have been made into official standards by NIST, implement `FALCON` and `HQC`
