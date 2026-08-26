@@ -107,6 +107,24 @@ True if the signature is valid
 
 - `ValueError`: The context string is too long or Invalid hash alg was provided
 
+### `SLHDSA.ExportPublicKeyPEM()`
+
+Export the public key in PEM PKCS#8 DER format
+
+`Returns`
+
+The PEM string (or None if the key hasn't been generated)
+
+### `SLHDSA.ExportSecretKeyPEM()`
+
+Export the secret key (in seed form) in PEM PKCS#8 DER format
+
+**!!! The secret key should stay private !!!**
+
+`Returns`
+
+The PEM string (or None if the key hasn't been generated)
+
 ### `SLHDSA.public_key`
 
 The byte form of the public key used for verifying a signature. (or `None` if the key hasn't been generated yet)
