@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+Removed test and docs files from sdist
+
 ## 0.2.0
 
 Added SLH DSA
