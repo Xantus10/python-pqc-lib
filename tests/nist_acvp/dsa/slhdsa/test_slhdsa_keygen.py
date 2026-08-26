@@ -9,10 +9,11 @@ pytestmark = [pytest.mark.nist, pytest.mark.dsa, pytest.mark.slhdsa, pytest.mark
 
 cur_dir = Path(__file__).parent
 
-def load_keygen_json(fn: str) -> list[str | bytes]:
+def load_keygen_json(fn: str) -> tuple[list[str | bytes], list[str]]:
   with open(fn, 'r') as f:
     content = json.load(f)
   tests = []
+  ids = []
   for tg in content:
     parameter_set = tg['parameterSet']
     for test in tg['tests']:
@@ -24,12 +25,13 @@ def load_keygen_json(fn: str) -> list[str | bytes]:
         bytes.fromhex(test['pk']),
         parameter_set
       ))
-  return tests
+      ids.append(f'{parameter_set}--{test['sk'][0:16]}-{test['sk'][-16:]}')
+  return tests, ids
 
 # NIST ACVP
-data_kg = load_keygen_json(cur_dir / 'nist_test_keygen.json')
+data_kg, ids = load_keygen_json(cur_dir / 'nist_test_keygen.json')
 
-@pytest.mark.parametrize(['skSeed', 'skPrf', 'pkSeed', 'sk', 'pk', 'parameterSet'], data_kg)
+@pytest.mark.parametrize(['skSeed', 'skPrf', 'pkSeed', 'sk', 'pk', 'parameterSet'], data_kg, ids=ids)
 def test_slhdsa_keygen(crypto_instance, skSeed, skPrf, pkSeed, sk, pk, parameterSet):
   inst: SLHDSA = crypto_instance(parameterSet)
   kg_sk, kg_pk = inst._deterministicKeyGen(skSeed, skPrf, pkSeed)
