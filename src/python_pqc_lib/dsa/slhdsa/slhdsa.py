@@ -11,6 +11,7 @@ from .hypertree import HyperTree
 from .fors import FORS
 from .slh_hashes import SLH_Hashes_Factory, SLH_Hashes
 
+from ...util.pem import export_public_key, export_private_key_seed
 from ...util.prehash import handle_prehash, PreHash_Alg, HASH_BIT_STRENGTHS
 
 class SLHDSA:
@@ -275,3 +276,25 @@ class SLHDSA:
   def _testSetSecretKey(self, sk: bytes):
     """Test function for explicitly setting secret key"""
     self._secret_key = sk
+
+  def ExportPublicKeyPEM(self) -> str | None:
+    """
+    Export the public key in PEM PKCS#8 DER format
+
+    Returns:
+      The PEM string (or None if the key hasn't been generated)
+    """
+    if self.public_key is None: return None
+    return export_public_key('slhdsa', self._parameter_version, self.public_key)
+
+  def ExportSecretKeyPEM(self) -> str | None:
+    """
+    Export the secret key (in seed form) in PEM PKCS#8 DER format
+
+    **!!! The secret key should stay private !!!**
+
+    Returns:
+      The PEM string (or None if the key hasn't been generated)
+    """
+    if self._secret_key is None: return None
+    return export_private_key_seed('slhdsa', self._parameter_version, self._secret_key)

@@ -9,17 +9,27 @@ ALGORITHM_OID = {
   'mldsa-87': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x13',
   'mlkem-512': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x01',
   'mlkem-768': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x02',
-  'mlkem-1024': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x03'
+  'mlkem-1024': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x04\x03',
+  'slhdsa-SLH-DSA-SHA2-128s': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x14',
+  'slhdsa-SLH-DSA-SHA2-128f': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x15',
+  'slhdsa-SLH-DSA-SHA2-192s': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x16',
+  'slhdsa-SLH-DSA-SHA2-192f': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x17',
+  'slhdsa-SLH-DSA-SHA2-256s': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x18',
+  'slhdsa-SLH-DSA-SHA2-256f': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x19',
+  'slhdsa-SLH-DSA-SHAKE-128s': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x1a',
+  'slhdsa-SLH-DSA-SHAKE-128f': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x1b',
+  'slhdsa-SLH-DSA-SHAKE-192s': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x1c',
+  'slhdsa-SLH-DSA-SHAKE-192f': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x1d',
+  'slhdsa-SLH-DSA-SHAKE-256s': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x1e',
+  'slhdsa-SLH-DSA-SHAKE-256f': b'\x06\x09\x60\x86\x48\x01\x65\x03\x04\x03\x1f'
 }
 
 TAG_SEQUENCE = b'\x30'
 TAG_INTEGER = b'\x02'
 TAG_BIT_STRING = b'\x03'
 TAG_OCTET_STRING = b'\x04'
-TAG_IMPLICIT_CONTEXT_SEED = b'\x80'
-TAG_IMPLICIT_CONTEXT_EXPANDED = b'\x81'
 
-type Scheme = Literal['mlkem', 'mldsa']
+type Scheme = Literal['mlkem', 'mldsa', 'slhdsa']
 
 
 def _construct_length(length: int):
@@ -114,8 +124,7 @@ def _private_key_octet_seed(seed: bytes):
   Returns:
     The bytes of PrivateKey
   """
-  inner_part = TAG_IMPLICIT_CONTEXT_SEED + _construct_length(len(seed)) + seed
-  return TAG_OCTET_STRING + _construct_length(len(inner_part)) + inner_part
+  return TAG_OCTET_STRING + _construct_length(len(seed)) + seed
 
 def _private_key_info(alg: Scheme, version: str, seed: bytes):
   """
